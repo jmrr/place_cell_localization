@@ -29,24 +29,13 @@ for i = 1:numKernels
     
     % Prevent tuning curve out of bounds
     
-    lowerBound = fr-sideSpan+1;
-    upperBound = fr+sideSpan;
-    
-    if lowerBound < 1 && upperBound < lengthCurves(i)
-        
-        upperBound = upperBound - lowerBound + 1; % lowerBound < 0 upperBound shifted to the right
-        lowerBound = 1;
-        
-    elseif lowerBound > 0 && upperBound > lengthCurves(i)
-        
-        lowerBound = lowerBound - (upperBound - lengthCurves(i));
-        upperBound = lengthCurves(i);
-    end
+    [lowerBound, upperBound] = getBounds(fr, sideSpan, lengthCurves(i));
     
     c1 = scores{i}(lowerBound:fr);
     c2 = scores{i}(fr+1:upperBound);
     
     curves(i,:)  = [c1 c2];
+    
 end
 
 end % end getTuningCurves
