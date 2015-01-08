@@ -1,12 +1,13 @@
 function plotOverlappedCurvesWithMinMax(curves,varargin)
 
+withSmoothing = 0;
+
 if nargin > 1 % Parse multiple inputs
     withSmoothing = 1;
 end
 
 numCurves = size(curves,1);
 lenCurves = size(curves,2);
-figure;
 rgbColor = [0 0.447 0.741];
 hold on
 for i = 1:numCurves
