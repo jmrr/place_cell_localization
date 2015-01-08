@@ -16,7 +16,7 @@ for i = 1:numCurves
         curves(i,:) = smooth(curves(i,:),varargin{1});
     end
     
-    plot(curves(i,:),'.','Color',rgbColor);
+    plot(curves(i,:),'-','Color',rgbColor,'LineWidth',0.5);
 end % end for
     
     plot(mean(curves,1),'LineWidth',4,'Color',rgbColor);
