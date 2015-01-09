@@ -1,4 +1,4 @@
-function singleCellPlots(paramsDataset, paramsQuery, paramsCells)
+function singleCellSubPlots(paramsDataset, paramsQuery, paramsCells)
 
 
 % Get kernels
@@ -9,11 +9,11 @@ kernels = results.Kernel;
 % Cell Parameters
 numCells   = paramsCells.numCells;
 lenJourney = size(kernels{1},1);
-queryLocs  = linspace(100,lenJourney, numCells);
 sideSpan   = paramsCells.sideSpan;
+bound     = round(sideSpan/2);
+queryLocs  = linspace(bound,lenJourney-bound, numCells);
 
 for i = 1:length(queryLocs)
-    
     curves{i} = getTuningCurves(queryLocs(i), kernels, paramsDataset, paramsQuery,...
         sideSpan, trainingSet);
     
@@ -23,7 +23,6 @@ end
 %% Single-cell plots:
 
 % A single example:
-% plotOverlappedCurvesWithMinMax(curves{6},30,0.1)
 
 fprintf('You have %d cells. Your sublot will have...\n',numCells)
 rows = input('How many rows?\n');
@@ -36,7 +35,7 @@ for i = 1:length(queryLocs)
 
     figure(2);
     subplot(rows,cols,i)
-    plotOverlappedCurvesWithMinMax(curves{i},30,0.1);
+    plotOverlappedCurvesWithMinMax(curves{i},paramsCells.smoothFac,0.1);
     if numCells > 8
         legend off
     end

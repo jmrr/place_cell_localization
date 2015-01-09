@@ -16,7 +16,7 @@ for i = 1:numCurves
         curves(i,:) = smooth(curves(i,:),varargin{1});
     end
     
-    hCurves = plot(curves(i,:),'.','Color',rgbColor);
+    hCurves = plot(curves(i,:),'-','Color',rgbColor,'LineWidth',0.5);
 
 end % end for
 

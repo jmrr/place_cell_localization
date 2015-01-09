@@ -3,6 +3,8 @@ function curves = getTuningCurves(queryLoc, kernels, paramsDataset, ...
 
 numKernels = size(kernels,2);
 groundTruthStr = 'ground_truth_C%d_P%d.csv';
+
+% Get training ground truth
 j = 1;
 
 for i = trainingSet
@@ -11,25 +13,31 @@ for i = trainingSet
     j = j+1;
 end % end for
 
+% Get query ground truth
+queryGtFname = sprintf(groundTruthStr,paramsQuery.queryCorridor,paramsQuery.queryPass);
+queryGt = csvread(fullfile(paramsDataset.groundTruthPath,queryGtFname),1,1);
 
-[m cellLocs]   = cellfun(@(x) min(abs(x-queryLoc)),groundTruth,'UniformOutput',0);
+posQueryLoc = queryGt(round(queryLoc));
+[m cellLocs]   = cellfun(@(x) min(abs(x-posQueryLoc)),groundTruth,'UniformOutput',0);
 frameLocations = cell2mat(cellLocs);
 %%
 for i = 1:numKernels
-    scores{i}       = kernels{i}(frameLocations(paramsQuery.queryPass),:);
-    lengthCurves(i) = size(scores{i},2);
+    scores{i}       = kernels{i}(:,frameLocations(i))';
 end
+
+lengthCurve = size(scores{1},2);
+
 %% get curves around desired location
 
 
 curves  = zeros(numKernels,sideSpan*2);
 
 for i = 1:numKernels
-    fr = frameLocations(i);
+    fr = round(queryLoc);
     
     % Prevent tuning curve out of bounds
     
-    [lowerBound, upperBound] = getBounds(fr, sideSpan, lengthCurves(i));
+    [lowerBound, upperBound] = getBounds(fr, sideSpan, lengthCurve);
     
     c1 = scores{i}(lowerBound:fr);
     c2 = scores{i}(fr+1:upperBound);

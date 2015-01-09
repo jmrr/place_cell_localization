@@ -1,12 +1,10 @@
-function normCell = normalizeCells(currCell, thresh)
+function normCell = normalizeCells(currCell, paramsCells, thresh)
 % thresh is a heuristic from eye-ball inspection
-
-% An example with cell id = 6
 
 % First threshold to a min
 
 for i = 1:size(currCell,1)
-    smCurves(i,:) = smooth(currCell(i,:),30);
+    smCurves(i,:) = smooth(currCell(i,:), paramsCells.smoothFac);
     smCurves(i,smCurves(i,:) < thresh) = thresh;
 end
 
@@ -16,9 +14,7 @@ totalMax = max(smCurves(:));
 
 % Produce normalization [0,1]
 
-% normalizedCurves = cellfun(@(x) (x-thresh)/totalMax,curves,'UniformOutput',false);
-
-normCell = arrayfun(@(x) (x-thresh)/totalMax, smCurves);
+normCell = arrayfun(@(x) (x-thresh)/(totalMax-thresh), smCurves);
 
 end %end function
 

@@ -9,8 +9,11 @@ kernels = results.Kernel;
 % Cell Parameters
 numCells   = paramsCells.numCells;
 lenJourney = size(kernels{1},1);
-queryLocs  = linspace(100,lenJourney, numCells);
 sideSpan   = paramsCells.sideSpan;
+bound     = round(sideSpan/2);
+queryLocs  = linspace(bound,lenJourney-bound, numCells);
+
+smoothFac  = paramsCells.smoothFac;
 
 figure
 for i = 1:length(queryLocs)
@@ -31,7 +34,7 @@ end
 figure;
 for idx = 1:size(meanCurves,1)
     
-    smoothedCurves = smooth(meanCurves(idx,:),40);
+    smoothedCurves = smooth(meanCurves(idx,:), smoothFac);
     plot(curvesAxis(idx,:), smoothedCurves);
     hold on
     

@@ -9,8 +9,9 @@ kernels = results.Kernel;
 % Cell Parameters
 numCells   = paramsCells.numCells;
 lenJourney = size(kernels{1},1);
-queryLocs  = linspace(100,lenJourney, numCells);
 sideSpan   = paramsCells.sideSpan;
+bound     = round(sideSpan/2);
+queryLocs  = linspace(bound,lenJourney-bound, numCells);
 
 for i = 1:length(queryLocs)
     
@@ -24,7 +25,7 @@ for i = 1:length(queryLocs)
 end
 
 
-normCells = cellfun(@(x,y) normalizeCells(x, thresh),curves,'UniformOutput',0);
+normCells = cellfun(@(x,y) normalizeCells(x, paramsCells, thresh),curves,'UniformOutput',0);
 
 meanNormCells = cellfun(@mean, normCells,'UniformOutput',0);
 
@@ -33,7 +34,7 @@ meanNormCells = cat(1,meanNormCells{:});
 figure;
 for idx = 1:size(meanNormCells,1)
     
-    plot(curvesAxis(idx,:), meanNormCells(idx,:));
+    plot(curvesAxis(idx,:), meanNormCells(idx,:),'LineWidth',2.5);
     hold on
     
 end
