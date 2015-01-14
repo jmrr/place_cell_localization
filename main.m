@@ -1,7 +1,7 @@
 % MAIN
 setup;
 
-experiment = 5;
+experiment = 3;
 
 switch experiment
     
