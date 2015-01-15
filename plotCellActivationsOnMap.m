@@ -16,7 +16,7 @@ lenCorrMap = size(c2Coords,1);
 % Position of circles in the map figure
 
 circlePosOnMap = round(cellPos*lenCorrMap/lenCorr);
-
+radius = 10; % Radius in pixels
 % Plot
 
 figure;
@@ -24,6 +24,6 @@ imshow(map);
 
 for i = 1:length(circlePosOnMap)
     
-    circles(c2Coords(circlePosOnMap(i),1),c2Coords(circlePosOnMap(i),2),10);
+    circles(c2Coords(circlePosOnMap(i),1),c2Coords(circlePosOnMap(i),2),radius);
 
 end %end for

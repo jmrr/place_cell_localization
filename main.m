@@ -1,7 +1,7 @@
 % MAIN
 setup;
 
-experiment = 3;
+experiment = 4;
 
 switch experiment
     
@@ -22,12 +22,12 @@ switch experiment
         
     case 4 % Multiple cells, with normalization
         
-        singleCellPlots(paramsDataset, paramsQuery, paramsCells);
+        singleCellSubPlots(paramsDataset, paramsQuery, paramsCells);
         thresh = input('Select a threshold\n');
         multipleCellsWithNormalization(paramsDataset, paramsQuery, paramsCells, thresh);
     
     case 5 % Multiple cells, with normalization and hardcoded threshold
-        thresh = 10;
+        thresh = 10.5;
         multipleCellsWithNormalization(paramsDataset, paramsQuery, paramsCells, thresh);
 end
 

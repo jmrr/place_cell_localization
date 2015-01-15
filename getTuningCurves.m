@@ -1,4 +1,4 @@
-function curves = getTuningCurves(queryLoc, kernels, paramsDataset, ...
+function [curves, varargout] = getTuningCurves(queryLoc, kernels, paramsDataset, ...
     paramsQuery, sideSpan, trainingSet)
 
 numKernels = size(kernels,2);
@@ -19,7 +19,14 @@ queryGt = csvread(fullfile(paramsDataset.groundTruthPath,queryGtFname),1,1);
 
 posQueryLoc = queryGt(round(queryLoc));
 [m cellLocs]   = cellfun(@(x) min(abs(x-posQueryLoc)),groundTruth,'UniformOutput',0);
+
 frameLocations = cell2mat(cellLocs);
+
+if nargout > 1
+
+    varargout{1} = frameLocations;
+    
+end
 %%
 for i = 1:numKernels
     scores{i}       = kernels{i}(:,frameLocations(i))';
