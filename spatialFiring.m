@@ -1,3 +1,9 @@
+%% USER PARAMETERS
+
+% Place fields:
+
+
+
 %% Load default parameters
 
 setup;
@@ -19,20 +25,7 @@ kernels = results.Kernel;
 
 %% Load corridor length in metres.
 
-groundTruthStr = 'ground_truth_C%d_P%d.csv';
-
-% Get training ground truth
-j = 1;
-
-for i = trainingSet
-    gtFname = sprintf(groundTruthStr,paramsQuery.queryCorridor,i);
-    groundTruth{j} = csvread(fullfile(paramsDataset.groundTruthPath,gtFname),1,1);
-    j = j+1;
-end % end for
-
-% Get query ground truth
-queryGtFname = sprintf(groundTruthStr,paramsQuery.queryCorridor,paramsQuery.queryPass);
-queryGt = csvread(fullfile(paramsDataset.groundTruthPath,queryGtFname),1,1);
+[trainingGt, queryGt] = getGroundTruth(paramsDataset, paramsQuery, trainingSet);
 
 corrLen = queryGt(end); % Length in centimetres
 numFramesCorr = length(queryGt); % Number of frames corridor
@@ -63,7 +56,7 @@ thresh = 5.5;
 dbPassesCellLocs = zeros(numSamples, length(kernels));
 for i = 1: numSamples
     
-    [curves{i} dbPassesCellLocs(i,:)] = getTuningCurves(sampleFrameSpacing(i), kernels, paramsDataset, paramsQuery,...
+    [curves{i}, dbPassesCellLocs(i,:)] = getTuningCurves(sampleFrameSpacing(i), kernels, paramsDataset, paramsQuery,...
         paramsCells.sideSpan, trainingSet);
 end
 
@@ -90,7 +83,7 @@ for i = 1:numSamples
         
         span = lowerBound:upperBound;
         firingLocs(i,j) = span(maxLoc(i,j));
-        firingLocsInCm(i,j) = groundTruth{j}(firingLocs(i,j));
+        firingLocsInCm(i,j) = trainingGt{j}(firingLocs(i,j));
     end
     
 end
@@ -139,7 +132,7 @@ for i = 1:size(circlePosOnMap,1)
         
         % Choose color [GET THIS OUT OF HERE]
         
-        [~, idxColor] = min(abs(firingLocsInCm(i,j) - cellIntervals))
+        [~, idxColor] = min(abs(firingLocsInCm(i,j) - cellIntervals));
         if idxColor == 8
             idxColor = 1;
         end
