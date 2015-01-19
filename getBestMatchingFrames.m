@@ -1,11 +1,10 @@
-function bestMatchingFrames = getBestMatchingFrames(paramsDataset, paramsQuery, paramsCells)
+function bestMatchingFrames = getBestMatchingFrames(paramsDataset, queryFrame, paramsCells)
 
 
 [results, trainingSet] = getKernel(paramsDataset, paramsQuery);
 
 kernels = results.Kernel;
 
-queryFrame    = paramsCells.queryFrame;
 numTopMatches = paramsCells.numTopMatches;
 
 [top, topIdx] = simulateQuery(kernels, queryFrame, numTopMatches);

@@ -1,9 +1,3 @@
-%% USER PARAMETERS
-
-% Place fields:
-
-
-
 %% Load default parameters
 
 setup;
