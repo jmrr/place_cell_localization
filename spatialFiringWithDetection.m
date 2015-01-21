@@ -81,7 +81,8 @@ for i = 1:paramsCells.numCells
         
         % If max of the peaks is the first or last sample take the max
         try
-            [maxPeak, maxIdx(i,j)] = max(pks);
+            [maxPeak, maxPeakIdx] = max(pks);
+            maxIdx(i,j) = locs(maxPeakIdx);
         catch
             [maxPeak, maxIdx(i,j)] = max(cell);
         end
