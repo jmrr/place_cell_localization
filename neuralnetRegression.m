@@ -42,15 +42,16 @@ end
 
 %% Prepare data for neural net
 % Input
-
-input = cat(1,curves{:})'; % This would give a sideSpan*2 x numCells*9 size matrix.
+concatExperiments = cellfun(@(x) reshape(x,numel(x),1),curves,'UniformOutput',0);
+input = cell2mat(concatExperiments); % This would give a numCells*(lengthCells*numPasses)
+                                     % size matrix.
 
 % Target: Find the peaks of the place cells and their locations
 
 numPasses      = length(trainingSet);       % Num of training or database passes
 
 maxIdx         = zeros(paramsCells.numCells, numPasses);
-gtPlaceCell = zeros(paramsCells.sideSpan*2,paramsCells.numCells* numPasses);
+gtPlaceCell = zeros(paramsCells.sideSpan*2*numPasses,paramsCells.numCells);
 
 for i = 1:paramsCells.numCells
     
@@ -90,7 +91,10 @@ for i = 1:paramsCells.numCells
         
         % Ground Truth place cell
         gtFiringLoc = trainingGt{j}(firingLoc);
-        gtPlaceCell(:,i*j) = trainingGt{j}(span) - gtFiringLoc;
+        startIdx = paramsCells.sideSpan*2*(j-1)+1;
+        endIdx   = paramsCells.sideSpan*2*(j);
+        gtPlaceCell(startIdx:endIdx,i) = ...
+            trainingGt{j}(span) - gtFiringLoc;
 
     end
     
