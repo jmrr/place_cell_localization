@@ -43,38 +43,19 @@ end
 %% Prepare data for neural net
 % Input
 concatExperiments = cellfun(@(x) reshape(x,numel(x),1),curves,'UniformOutput',0);
-input = cell2mat(concatExperiments); % This would give a numCells*(lengthCells*numPasses)
+input = cell2mat(concatExperiments)'; % This would give a numCells*(lengthCells*numPasses)
                                      % size matrix.
 
 % Target: Find the peaks of the place cells and their locations
 
 numPasses      = length(trainingSet);       % Num of training or database passes
 
-maxIdx         = zeros(paramsCells.numCells, numPasses);
-gtPlaceCell = zeros(paramsCells.sideSpan*2*numPasses,paramsCells.numCells);
+gtPlaceCell = zeros(paramsCells.numCells, paramsCells.sideSpan*2*numPasses);
 
 for i = 1:paramsCells.numCells
     
     for j = 1:numPasses
-        cell = curves{i}(j,:);  % Get the cell, i.e. the tuning curve
-        [pks, locs] = findpeaks(cell);  % Find the peak and its locations
-        
-        % If max of the peaks is the first or last sample take the max
-        try
-            [maxPeak, maxPeakIdx] = max(pks);
-            maxIdx(i,j)     = locs(maxPeakIdx);
-        catch
-            [maxPeak, maxIdx(i,j)] = max(cell);
-        end
-% % Verification plot        
-%         plot(cell)
-%         hold on
-%         plot(maxIdx(i,j), maxPeak,'.r', 'LineWidth',4);
-%         hold off;
-        
-        % In this case we input the g.t. locations in the DB axis as we're
-        % testing and shouln't know the g.t. position of the query.
-        
+          
         % This bit here is to retrieve the actual frame positions of the
         % tuning curves in the whole kernel response for that particular
         % location.
@@ -86,16 +67,11 @@ for i = 1:paramsCells.numCells
         
         span = lowerBound:upperBound;
         
-        % Exact firing location
-        firingLoc = span(maxIdx(i,j));
-        
         % Ground Truth place cell
-        gtFiringLoc = trainingGt{j}(firingLoc);
         startIdx = paramsCells.sideSpan*2*(j-1)+1;
         endIdx   = paramsCells.sideSpan*2*(j);
-        gtPlaceCell(startIdx:endIdx,i) = ...
-            trainingGt{j}(span) - gtFiringLoc;
-
+        gtPlaceCell(i,startIdx:endIdx) = ...
+            trainingGt{j}(span) - trainingGt{j}(dbPassesCellLocs(i,j));
     end
     
 end
@@ -163,7 +139,7 @@ for i = 1:paramsCells.numCells
             maxQueryIdx(i) = locs(maxPeakIdx);
         catch
             [maxPeak, maxQueryIdx(i)] = max(queryTuningCurve);
-        end
+        end 
 % % Verification plot        
 %         plot(cell)
 %         hold on
@@ -186,7 +162,7 @@ for i = 1:paramsCells.numCells
         qFiringLoc = span(maxQueryIdx(i));
         
         % Ground Truth query cell
-        qGtFiringLoc = queryGt(firingLoc);
+        qGtFiringLoc = queryGt(qFiringLoc);
         queryGtPositions(:,i) = queryGt(span) - qGtFiringLoc;
 
    
@@ -194,7 +170,7 @@ end
 
 %%  Test (simulate)
 
-locEstimate = sim(net, queryCurves);
+locEstimate = sim(net, queryCurves');
 
-errorInMetres = abs(locEstimate - queryGtPositions)/100;
+errorInMetres = abs(locEstimate - queryGtPositions')/100;
 

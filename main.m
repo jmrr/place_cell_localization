@@ -26,7 +26,7 @@ switch experiment
         multipleCellsWithNormalization(paramsDataset, paramsQuery, paramsCells, thresh);
         
     case 5 % Multiple cells, with normalization and hardcoded threshold
-        thresh = 10.5;
+        thresh = 0;
         multipleCellsWithNormalization(paramsDataset, paramsQuery, paramsCells, thresh);
         
     % Spatial firing of place cells
