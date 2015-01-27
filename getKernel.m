@@ -1,7 +1,6 @@
-function [results, trainingSet] = getKernel(paramsDataset, paramsQuery)
+function [results, trainingSet] = getKernel(paramsDataset, paramsTraining, paramsQuery)
 
-trainingSet = paramsDataset.passes;
-trainingSet(paramsQuery.queryPass) = [];
+trainingSet = paramsTraining.trainingSet;
 trainingSetStr = sprintf('%d',trainingSet);
 
 kernelPath     = sprintf(paramsDataset.kernelPath,paramsDataset.encoding, ...

@@ -4,20 +4,28 @@
 setup;
 
 % Number of cells desired for the experiment
-paramsCells.numCells = 8;
+paramsCells.numCells = 16;
 
 
 %% Get training kernels
-[results, trainingSet] = getKernel(paramsDataset, paramsQuery);
+queriesForTraining = paramsQuery;
 
-kernels = results.Kernel;
+for i = 1 %% CHANGE FOR ALL TRAINING PASSES
+    
+    queriesForTraining.queryPass = i;
+    [results, trainingSet] = getKernel(paramsDataset, paramsTraining, queriesForTraining);
+    kernels = results.Kernel;
+    
+end
 
 %% Divide training testing
 
 % Leave one out for now, so can use old code.
+% Of the 10 passes, 5 have been used for training, and the queries must be
+% from one of the 5 remaining passes that have NOT been used for training.
 
 % Get ground truth
-[trainingGt, queryGt] = getGroundTruth(paramsDataset, paramsQuery, trainingSet);
+[trainingGt, queryGt] = getGroundTruth(paramsDataset, queriesForTraining, paramsTraining.trainingSet);
 
 % Load corridor length in centimetres.
 corrLen       = queryGt(end); % Length in centimetres
@@ -44,7 +52,7 @@ end
 % Input
 concatExperiments = cellfun(@(x) reshape(x,numel(x),1),curves,'UniformOutput',0);
 input = cell2mat(concatExperiments)'; % This would give a numCells*(lengthCells*numPasses)
-                                     % size matrix.
+% size matrix.
 
 % Target: Find the peaks of the place cells and their locations
 
@@ -55,7 +63,7 @@ gtPlaceCell = zeros(paramsCells.numCells, paramsCells.sideSpan*2*numPasses);
 for i = 1:paramsCells.numCells
     
     for j = 1:numPasses
-          
+        
         % This bit here is to retrieve the actual frame positions of the
         % tuning curves in the whole kernel response for that particular
         % location.
@@ -107,8 +115,8 @@ for i = 1:length(queryLocs)
     
     
     fr = round(queryLocs(i)); % In  the tuning curve, take the centre frame as
-                          % the one corresponding to the g.t. in the query
-                          % frames axis.
+    % the one corresponding to the g.t. in the query
+    % frames axis.
     
     % Prevent tuning curve out of bounds
     
@@ -121,7 +129,7 @@ for i = 1:length(queryLocs)
     
 end
 
-%% 
+%%
 
 % query gt
 
@@ -130,42 +138,42 @@ queryGtPositions = zeros(paramsCells.sideSpan*2,paramsCells.numCells);
 
 for i = 1:paramsCells.numCells
     
-        queryTuningCurve = queryCurves(:,i); % Get the tuning curve for the query
-        [pks, locs] = findpeaks(double(queryTuningCurve));  % Find the peak and its locations
-        
-        % If max of the peaks is the first or last sample take the max
-        try
-            [maxPeak, maxPeakIdx] = max(pks);
-            maxQueryIdx(i) = locs(maxPeakIdx);
-        catch
-            [maxPeak, maxQueryIdx(i)] = max(queryTuningCurve);
-        end 
-% % Verification plot        
-%         plot(cell)
-%         hold on
-%         plot(maxIdx(i,j), maxPeak,'.r', 'LineWidth',4);
-%         hold off;
-        
-        % In this case we input the g.t. locations in the DB axis as we're
-        % testing and shouln't know the g.t. position of the query.
-        
-        % This bit here is to retrieve the actual frame positions of the
-        % tuning curves in the whole kernel response for that particular
-        % location.
-        
-        [lowerBound, upperBound] = getBounds(round(queryLocs(i)), ...
-            paramsCells.sideSpan, numFramesCorr);
-        
-        span = lowerBound:upperBound;
-        
-        % Exact firing location
-        qFiringLoc = span(maxQueryIdx(i));
-        
-        % Ground Truth query cell
-        qGtFiringLoc = queryGt(qFiringLoc);
-        queryGtPositions(:,i) = queryGt(span) - qGtFiringLoc;
-
-   
+    queryTuningCurve = queryCurves(:,i); % Get the tuning curve for the query
+    [pks, locs] = findpeaks(double(queryTuningCurve));  % Find the peak and its locations
+    
+    % If max of the peaks is the first or last sample take the max
+    try
+        [maxPeak, maxPeakIdx] = max(pks);
+        maxQueryIdx(i) = locs(maxPeakIdx);
+    catch
+        [maxPeak, maxQueryIdx(i)] = max(queryTuningCurve);
+    end
+    % % Verification plot
+    %         plot(cell)
+    %         hold on
+    %         plot(maxIdx(i,j), maxPeak,'.r', 'LineWidth',4);
+    %         hold off;
+    
+    % In this case we input the g.t. locations in the DB axis as we're
+    % testing and shouln't know the g.t. position of the query.
+    
+    % This bit here is to retrieve the actual frame positions of the
+    % tuning curves in the whole kernel response for that particular
+    % location.
+    
+    [lowerBound, upperBound] = getBounds(round(queryLocs(i)), ...
+        paramsCells.sideSpan, numFramesCorr);
+    
+    span = lowerBound:upperBound;
+    
+    % Exact firing location
+    qFiringLoc = span(maxQueryIdx(i));
+    
+    % Ground Truth query cell
+    qGtFiringLoc = queryGt(qFiringLoc);
+    queryGtPositions(:,i) = queryGt(span) - qGtFiringLoc;
+    
+    
 end
 
 %%  Test (simulate)
