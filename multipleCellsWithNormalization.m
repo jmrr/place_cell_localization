@@ -1,8 +1,8 @@
-function multipleCellsWithNormalization(paramsDataset, paramsQuery, paramsCells, thresh)
+function multipleCellsWithNormalization(paramsDataset, paramsTraining, paramsQuery, paramsCells, thresh)
 
 
 % Get kernels
-[results, trainingSet] = getKernel(paramsDataset, paramsQuery);
+[results, trainingSet] = getKernel(paramsDataset, paramsTraining, paramsQuery);
 
 kernels = results.Kernel;
 
@@ -10,8 +10,7 @@ kernels = results.Kernel;
 numCells   = paramsCells.numCells;
 lenJourney = size(kernels{1},1);
 sideSpan   = paramsCells.sideSpan;
-bound     = round(sideSpan/2);
-queryLocs  = linspace(bound,lenJourney-bound, numCells);
+queryLocs  = linspace(sideSpan,lenJourney-sideSpan, numCells);
 
 for i = 1:length(queryLocs)
     
@@ -37,6 +36,6 @@ for idx = 1:size(meanNormCells,1)
     plot(curvesAxis(idx,:), meanNormCells(idx,:),'LineWidth',2.5);
     hold on
     
-end
+    endz
 
 end % end function
