@@ -6,35 +6,38 @@ setup;
 % Number of cells desired for the experiment
 paramsCells.numCells = 16;
 
+% Number of queries
+numQueries = 3;
 
+debugFlag   = 0; % 0 = No plots;
 
+%% Divide training testing and obtain locations where the place cells will be defined
 
-%% Divide training testing
-
-% Leave one out for now, so can use old code.
 % Of the 10 passes, 5 have been used for training, and the queries must be
 % from one of the 5 remaining passes that have NOT been used for training.
 
 % Get ground truth
-[trainingGt, queryGt] = getGroundTruth(paramsDataset, queriesForTraining, paramsTraining.trainingSet);
+[allGroundTruth, ~] = getGroundTruth(paramsDataset, paramsQuery, paramsDataset.passes);
 
 % Load corridor length in centimetres.
-corrLen       = queryGt(end); % Length in centimetres
-numFramesCorr = length(queryGt); % Number of frames corridor
+corrLengths        = cellfun(@(x) max(x),allGroundTruth);
+[corrLen shortest] = min(corrLengths); % The minimum length will be the final length of the corridor
 
-cellIntervals = linspace(0,corrLen,paramsCells.numCells);
+cmPerFrame = corrLen/length(allGroundTruth{shortest});
 
-cellPositions = linspace(paramsCells.sideSpan,numFramesCorr-paramsCells.sideSpan,paramsCells.numCells);
+sideSpanCm = paramsCells.sideSpan*cmPerFrame;
+
+cellPositions = linspace(sideSpanCm,...                                 % REVISE HERE THE STARTING AND END POINTS SIDESPAN/2
+    corrLen -(sideSpanCm),paramsCells.numCells);
 
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
-%% Neural net input:
+%% Neural net training input:
 
-inputNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, kernels, trainingSet, cellPositions, 1);
-
+inputNN = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
 
 %% Neural net target
 
-target = queryGt(round(cellPositions))';
+target = neuralNetTarget(paramsCells, cellPositions, sideSpanCm);
 
 %% Train the network
 
@@ -43,14 +46,29 @@ net = newgrnn(inputNN, target);
 
 %% Neural net query
 
-[results, trainingSet] = getKernel(paramsDataset, paramsTraining, paramsQuery);
-queryKernels = results.Kernel;
-
-queryNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, queryKernels, trainingSet, cellPositions, 1);
-
-locEstimate = sim(net, queryNN);
-
+queryFrames = round(linspace(200,600,numQueries));
+queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, debugFlag);
 
 %%  Test (simulate)
 
 locEstimate = sim(net, queryNN);
+
+%% Evaluation
+
+% Ground truth
+queryGt = [];
+
+for i = 1:length(paramsTraining.querySet)
+    
+    for q = 1:length(queryFrames)
+   
+        gt(q,:) = allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q)-paramsCells.sideSpan:queryFrames(q)+paramsCells.sideSpan-1);
+    
+    end
+    queryGt = [queryGt reshape(gt,1,numel(gt))];
+end
+
+
+%%
+figure
+plot(locEstimate); hold on; plot(target)
