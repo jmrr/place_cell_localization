@@ -36,6 +36,6 @@ for idx = 1:size(meanNormCells,1)
     plot(curvesAxis(idx,:), meanNormCells(idx,:),'LineWidth',2.5);
     hold on
     
-    endz
+end
 
 end % end function

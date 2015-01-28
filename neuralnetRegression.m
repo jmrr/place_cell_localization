@@ -7,16 +7,7 @@ setup;
 paramsCells.numCells = 16;
 
 
-%% Get training kernels
-queriesForTraining = paramsQuery;
 
-for i = 3 %% CHANGE FOR ALL TRAINING PASSES
-    
-    queriesForTraining.queryPass = i;
-    [results, trainingSet] = getKernel(paramsDataset, paramsTraining, queriesForTraining);
-    kernels = results.Kernel;
-    
-end
 
 %% Divide training testing
 
@@ -33,14 +24,13 @@ numFramesCorr = length(queryGt); % Number of frames corridor
 
 cellIntervals = linspace(0,corrLen,paramsCells.numCells);
 
-cellPositions = linspace(paramsCells.sideSpan/2,numFramesCorr-paramsCells.sideSpan/2,paramsCells.numCells);
+cellPositions = linspace(paramsCells.sideSpan,numFramesCorr-paramsCells.sideSpan,paramsCells.numCells);
 
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
 %% Neural net input:
 
-inputNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, kernels, trainingSet, cellPositions, paramsCells.threshold, 1);
+inputNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, kernels, trainingSet, cellPositions, 1);
 
-activationMat = inputNN > 0; 
 
 %% Neural net target
 
@@ -56,7 +46,7 @@ net = newgrnn(inputNN, target);
 [results, trainingSet] = getKernel(paramsDataset, paramsTraining, paramsQuery);
 queryKernels = results.Kernel;
 
-queryNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, queryKernels, trainingSet, cellPositions, paramsCells.threshold, 1);
+queryNN = getNeuralNetInput(paramsDataset, paramsQuery, paramsCells, queryKernels, trainingSet, cellPositions, 1);
 
 locEstimate = sim(net, queryNN);
 
