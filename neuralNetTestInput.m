@@ -10,14 +10,14 @@ numQueryPasses  = length(querySet);
 for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     
     paramsQuery.queryPass = querySet(i);
-    [results, ~] = getKernel(paramsDataset, paramsTraining, paramsQuery);
+    [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
     kernels = results.Kernel;
     
     %% Compute tuning curves for the whole length of the corridor
     
     for c = 1:length(cellPositions)
         
-        [scores{c} frameLocations{c}] = getResponseScores(cellPositions(c), kernels, paramsDataset, ...
+        [scores{c}, ~] = getResponseScores(cellPositions(c), kernels, paramsDataset, ...
             paramsQuery, trainingSet);
         
     end

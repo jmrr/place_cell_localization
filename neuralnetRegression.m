@@ -7,12 +7,14 @@ setup;
 paramsCells.numCells = 16;
 
 % Number of queries and range of frames to consider
-numQueries = 16;
-startQueryFrame = 250;
-endQueryFrame = 650;
+numQueries = 30;
+startQueryFrame = 200;
+endQueryFrame = 700;
 
+% Flags
 
-debugFlag   = 0; % 0 = No plots;
+debugFlag = 1; % 0: No plots;
+normFlag  = 1; % 0: No normalization
 
 %% Divide training testing and obtain locations where the place cells will be defined
 
@@ -24,7 +26,7 @@ debugFlag   = 0; % 0 = No plots;
 
 % Load corridor length in centimetres.
 corrLengths        = cellfun(@(x) max(x),allGroundTruth);
-[corrLen shortest] = min(corrLengths); % The minimum length will be the final length of the corridor
+[corrLen, shortest] = min(corrLengths); % The minimum length will be the final length of the corridor
 
 cmPerFrame = corrLen/length(allGroundTruth{shortest});
 
@@ -41,7 +43,7 @@ inputNN = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, par
 %% Neural net target
 
 target = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
-    paramsCells, cellPositions);
+    paramsCells, cellPositions, normFlag);
 
 %% Train the network
 
@@ -57,22 +59,9 @@ queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsC
 
 locEstimate = sim(net, queryNN);
 
-%% Ground truth
+%% Query ground truth
 
-% Ground truth
-queryGt = [];
-
-for i = 1:length(paramsTraining.querySet)
-    
-    for q = 1:length(queryFrames)
-   
-        gt(q,:) = allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q)-paramsCells.sideSpan:queryFrames(q)+paramsCells.sideSpan-1) - ...
-            allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q));
-    
-    end
-    queryGt = [queryGt reshape(gt',1,numel(gt))./100];
-end
-
+queryGt = getQueryGroundTruth(paramsTraining, paramsCells, queryFrames, allGroundTruth, normFlag);
 
 %% Plots
 figure
@@ -80,6 +69,6 @@ plot(locEstimate); hold on; plot(queryGt)
 
 %% Evaluate
 
-err = (locEstimate - queryGt);
+err = abs(locEstimate - queryGt);
 
 meanErr = mean(err);

@@ -12,7 +12,7 @@ numTrainingPasses  = length(trainingSet);
 for i = 1:numTrainingPasses
     
     queriesForTraining.queryPass = trainingSet(i);
-    [results, ~] = getKernel(paramsDataset, paramsTraining, queriesForTraining);
+    [results] = getKernel(paramsDataset, paramsTraining, queriesForTraining);
     kernels = results.Kernel;
     
     %% Compute tuning curves for the whole length of the corridor

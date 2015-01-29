@@ -1,5 +1,5 @@
 function [target] = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
-    paramsCells, cellPositions)
+    paramsCells, cellPositions, normFlag)
 
 target = [];
 
@@ -17,8 +17,11 @@ for i = 1:numTrainingPasses
     
         [~, gtFrame] = min(abs(groundTruth-cellPositions(j)));
         
-        gtCell(j,:) = groundTruth((gtFrame-paramsCells.sideSpan):(gtFrame+paramsCells.sideSpan-1)) - groundTruth(gtFrame);
-    
+        gtCell(j,:) = groundTruth((gtFrame-paramsCells.sideSpan):(gtFrame+paramsCells.sideSpan-1));
+        
+        if normFlag
+            gtCell(j,:) = gtCell(j,:) - groundTruth(gtFrame);
+        end
     end
     
     target = [target reshape(gtCell',1,numel(gtCell))./100]; % Convert to cm, and remember, reshape works column-wise!!
