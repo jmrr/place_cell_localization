@@ -12,7 +12,7 @@ startQueryFrame = 250;
 endQueryFrame = 650;
 
 
-debugFlag   = 1; % 0 = No plots;
+debugFlag   = 0; % 0 = No plots;
 
 %% Divide training testing and obtain locations where the place cells will be defined
 
@@ -57,7 +57,7 @@ queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsC
 
 locEstimate = sim(net, queryNN);
 
-%% Evaluation
+%% Ground truth
 
 % Ground truth
 queryGt = [];
@@ -74,6 +74,12 @@ for i = 1:length(paramsTraining.querySet)
 end
 
 
-%%
+%% Plots
 figure
 plot(locEstimate); hold on; plot(queryGt)
+
+%% Evaluate
+
+err = (locEstimate - queryGt);
+
+meanErr = mean(err);
