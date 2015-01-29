@@ -6,10 +6,13 @@ setup;
 % Number of cells desired for the experiment
 paramsCells.numCells = 16;
 
-% Number of queries
-numQueries = 3;
+% Number of queries and range of frames to consider
+numQueries = 16;
+startQueryFrame = 250;
+endQueryFrame = 650;
 
-debugFlag   = 0; % 0 = No plots;
+
+debugFlag   = 1; % 0 = No plots;
 
 %% Divide training testing and obtain locations where the place cells will be defined
 
@@ -37,7 +40,8 @@ inputNN = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, par
 
 %% Neural net target
 
-target = neuralNetTarget(paramsCells, cellPositions, sideSpanCm);
+target = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
+    paramsCells, cellPositions);
 
 %% Train the network
 
@@ -46,7 +50,7 @@ net = newgrnn(inputNN, target);
 
 %% Neural net query
 
-queryFrames = round(linspace(200,600,numQueries));
+queryFrames = round(linspace(startQueryFrame,endQueryFrame,numQueries));
 queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, debugFlag);
 
 %%  Test (simulate)
@@ -62,13 +66,14 @@ for i = 1:length(paramsTraining.querySet)
     
     for q = 1:length(queryFrames)
    
-        gt(q,:) = allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q)-paramsCells.sideSpan:queryFrames(q)+paramsCells.sideSpan-1);
+        gt(q,:) = allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q)-paramsCells.sideSpan:queryFrames(q)+paramsCells.sideSpan-1) - ...
+            allGroundTruth{paramsTraining.querySet(i)}(queryFrames(q));
     
     end
-    queryGt = [queryGt reshape(gt,1,numel(gt))];
+    queryGt = [queryGt reshape(gt',1,numel(gt))./100];
 end
 
 
 %%
 figure
-plot(locEstimate); hold on; plot(target)
+plot(locEstimate); hold on; plot(queryGt)
