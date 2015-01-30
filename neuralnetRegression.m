@@ -6,6 +6,9 @@ setup;
 % Number of cells desired for the experiment
 paramsCells.numCells = 16;
 
+% Number of observations
+numObservations  = 100;
+
 % Number of queries and range of frames to consider
 numQueries = 30;
 startQueryFrame = 200;
@@ -35,10 +38,16 @@ sideSpanCm = paramsCells.sideSpan*cmPerFrame;
 cellPositions = linspace(sideSpanCm,...                                 % REVISE HERE THE STARTING AND END POINTS SIDESPAN/2
     corrLen -(sideSpanCm),paramsCells.numCells);
 
+observations = linspace(sideSpanCm,...
+    corrLen - (sideSpanCm),numObservations);
+
+queryLocations = linspace(sideSpanCm,...
+    corrLen - (sideSpanCm),numQueries);
+
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
 %% Neural net training input:
 
-[inputNN, target, exampleFrames] = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
+[inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
 
 %% Neural net target
 % 
@@ -52,8 +61,8 @@ net = newgrnn(inputNN, target);
 
 %% Neural net query
 
-queryFrames = round(linspace(startQueryFrame,endQueryFrame,numQueries));
-queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames,exampleFrames, debugFlag);
+% queryFrames = round(linspace(startQueryFrame,endQueryFrame,numQueries));
+queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, debugFlag);
 
 %%  Test (simulate)
 
@@ -61,7 +70,7 @@ locEstimate = sim(net, queryNN);
 
 %% Query ground truth
 
-queryGt = getQueryGroundTruth(paramsTraining, paramsCells, queryFrames, allGroundTruth, normFlag);
+% queryGt = getQueryGroundTruth(paramsTraining, paramsCells, queryFrames, allGroundTruth, normFlag);
 
 %% Plots
 figure

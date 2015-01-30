@@ -1,8 +1,9 @@
-function [inputNN, target, exampleFrames] = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, debug)
+function [inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, debug)
 
 % Declare inputNN
 
 inputNN = [];
+
 
 %% Get training kernels
 queriesForTraining = paramsQuery;
@@ -18,16 +19,14 @@ for i = 1:numTrainingPasses
     [results] = getKernel(paramsDataset, paramsTraining, queriesForTraining);
     kernels = results.Kernel;
     
-    [activations exampleLocs, exampleFrames] = getActivationValues(kernels, trainingGt, i, paramsTraining, paramsCells, cellLocations);
+    [activations] = getActivationValues(observations, kernels, trainingGt, i, paramsTraining, paramsCells, cellLocations);
     
     inputNN = [inputNN activations]; 
    
 end
 
-cellLocsMat = repmat(cellLocations', 1, paramsTraining.numExamplesPerCell);
+target = observations - observations(round(end/2));
 
-temp = exampleLocs - cellLocsMat;
-
-target = repmat(temp(1,:),1,numTrainingPasses);
+target = repmat(target(1,:),1,numTrainingPasses);
 
 end % end function neuralNetInput

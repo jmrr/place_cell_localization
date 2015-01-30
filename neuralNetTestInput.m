@@ -1,4 +1,4 @@
-function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, exampleFrames, debug)
+function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, debug)
 
 testInputNN = [];
 
@@ -7,6 +7,9 @@ trainingSet     = paramsTraining.trainingSet;
 querySet        = paramsQuery.querySet;
 numQueryPasses  = length(querySet);
 
+trainingGt = getGroundTruth(paramsDataset, paramsQuery, trainingSet);
+queryGt = getGroundTruth(paramsDataset, paramsQuery, querySet);
+
 for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     
     paramsQuery.queryPass = querySet(i);
@@ -14,16 +17,20 @@ for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     kernels = results.Kernel;
     
     for k = 1:length(kernels)
-        for c = 1:length(cellPositions)
-            for q = 1:length(queryFrames)
-                act(q,:,k,i) = kernels{k}(queryFrames(q),exampleFrames{k}(c,round(length(cellPositions)/2)));
-                activation{c} = act;
-            end
-        end
+        cellFrames = frameFromGroundTruth(trainingGt{k}, cellPositions);
+        queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations); 
+        
+        activations{k} = kernels{k}(queryFrames, cellFrames)';
     end
     
+    % Activations. For now taking the mean after the normalization takes place.
+    normCurves  = cellfun(@(x) normalizeCells(x, paramsCells, paramsCells.threshold),activations,'UniformOutput',0);
+    normCurves  = cat(3,normCurves{:});
+    
+    activations = squeeze(mean(normCurves,3));
+    
+    testInputNN = [testInputNN activations];
 end
 
-testInputNN = activation;
 
 end % end function neuralNetInput
