@@ -1,10 +1,10 @@
-function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, debug)
+function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, exampleFrames, debug)
 
 testInputNN = [];
 
 %% Get training kernels
 trainingSet     = paramsTraining.trainingSet;
-querySet        = paramsTraining.querySet;
+querySet        = paramsQuery.querySet;
 numQueryPasses  = length(querySet);
 
 for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
@@ -13,47 +13,17 @@ for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
     kernels = results.Kernel;
     
-    %% Compute tuning curves for the whole length of the corridor
-    
-    for c = 1:length(cellPositions)
-        
-        [scores{c}, ~] = getResponseScores(cellPositions(c), kernels, paramsDataset, ...
-            paramsQuery, trainingSet);
-        
-    end
-    
-    normCurves = cellfun(@(x,y) normalizeCells(x, paramsCells, paramsCells.threshold),scores,'UniformOutput',0);
-    
-    meanNormCurves = cellfun(@mean, normCurves,'UniformOutput',0);
-    
-    completeTuningCurves = cat(1,meanNormCurves{:});
-    
-    if (debug)
-        figure;
-        for idx = 1:size(completeTuningCurves,1)
-            
-            plot(completeTuningCurves(idx,:),'LineWidth',2.5);
-            hold on
-            
+    for k = 1:length(kernels)
+        for c = 1:length(cellPositions)
+            for q = 1:length(queryFrames)
+                act(q,:,k,i) = kernels{k}(queryFrames(q),exampleFrames{k}(c,round(length(cellPositions)/2)));
+                activation{c} = act;
+            end
         end
     end
     
-    %% Retrieve cell (sensors) responses
-    
-    for c = 1:length(queryFrames)
-        
-        lengthCurve = size(completeTuningCurves,2);
-        
-        [lowerBound, upperBound] = getBounds(queryFrames(c), ... % frameLocations{c}(i) denotes the position corresponding to the ground truth in the
-            paramsCells.sideSpan, lengthCurve);                         % complete response of the training pass.
-        
-        cells{c} = completeTuningCurves(:,lowerBound:upperBound);
-        
-    end
-    
-testInputNN = [testInputNN cat(2,cells{:})];
-
 end
 
+testInputNN = activation;
 
 end % end function neuralNetInput

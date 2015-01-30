@@ -3,10 +3,18 @@ function normCell = normalizeCells(currCell, paramsCells, thresh)
 
 % First threshold to a min
 
-for i = 1:size(currCell,1)
-    smCurves(i,:) = smooth(currCell(i,:), paramsCells.smoothFac);
-    smCurves(i,smCurves(i,:) < thresh) = thresh;
+if paramsCells.smoothFac > 0
+    
+    for i = 1:size(currCell,1)
+        smCurves(i,:) = smooth(currCell(i,:), paramsCells.smoothFac);
+        smCurves(i,smCurves(i,:) < thresh) = thresh;
+    end
+else
+    
+    smCurves = currCell;
+    smCurves(smCurves < thresh) = thresh;
 end
+
 
 % Find max
 

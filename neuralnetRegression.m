@@ -22,7 +22,7 @@ normFlag  = 1; % 0: No normalization
 % from one of the 5 remaining passes that have NOT been used for training.
 
 % Get ground truth
-[allGroundTruth, ~] = getGroundTruth(paramsDataset, paramsQuery, paramsDataset.passes);
+[allGroundTruth] = getGroundTruth(paramsDataset, paramsQuery, paramsDataset.passes);
 
 % Load corridor length in centimetres.
 corrLengths        = cellfun(@(x) max(x),allGroundTruth);
@@ -38,12 +38,12 @@ cellPositions = linspace(sideSpanCm,...                                 % REVISE
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
 %% Neural net training input:
 
-inputNN = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
+[inputNN, target, exampleFrames] = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
 
 %% Neural net target
-
-target = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
-    paramsCells, cellPositions, normFlag);
+% 
+% target = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
+%     paramsCells, cellPositions, normFlag);
 
 %% Train the network
 
@@ -53,7 +53,7 @@ net = newgrnn(inputNN, target);
 %% Neural net query
 
 queryFrames = round(linspace(startQueryFrame,endQueryFrame,numQueries));
-queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames, debugFlag);
+queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryFrames,exampleFrames, debugFlag);
 
 %%  Test (simulate)
 
