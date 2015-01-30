@@ -18,16 +18,17 @@ for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     
     for k = 1:length(kernels)
         cellFrames = frameFromGroundTruth(trainingGt{k}, cellPositions);
-        queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations); 
+        queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations);
         
         activations{k} = kernels{k}(queryFrames, cellFrames)';
     end
     
     % Activations. For now taking the mean after the normalization takes place.
-    normCurves  = cellfun(@(x) normalizeCells(x, paramsCells, paramsCells.threshold),activations,'UniformOutput',0);
-    normCurves  = cat(3,normCurves{:});
+    %     normCurves  = cellfun(@(x) normalizeCells(x, paramsCells, paramsCells.threshold),activations,'UniformOutput',0);
+    %     normCurves  = cat(3,normCurves{:});
     
-    activations = squeeze(mean(normCurves,3));
+    activations = cat(3,activations{:});
+    activations = squeeze(mean(activations,3));
     
     testInputNN = [testInputNN activations];
 end
