@@ -1,4 +1,4 @@
-function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, debug)
+function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, normFlag, debug)
 
 testInputNN = [];
 
@@ -11,7 +11,7 @@ trainingGt = getGroundTruth(paramsDataset, paramsQuery, trainingSet);
 queryGt = getGroundTruth(paramsDataset, paramsQuery, querySet);
 
 for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
-    
+    activations = [];
     paramsQuery.queryPass = querySet(i);
     [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
     kernels = results.Kernel;
@@ -33,5 +33,18 @@ for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
     testInputNN = [testInputNN activations];
 end
 
+testInputNN = double(testInputNN);
+
+% Thresholding
+
+testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
+
+% Normalization
+if (normFlag)
+    
+    totalMax = max(testInputNN(:));
+    testInputNN = (testInputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
+    
+end
 
 end % end function neuralNetInput

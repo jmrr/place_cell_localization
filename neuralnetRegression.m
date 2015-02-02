@@ -7,17 +7,15 @@ setup;
 paramsCells.numCells = 16;
 
 % Number of observations
-numObservations  = 100;
+numObservations  = 400;
 
 % Number of queries and range of frames to consider
-numQueries = 30;
-startQueryFrame = 200;
-endQueryFrame = 700;
+numQueries = 100;
 
 % Flags
 
 debugFlag = 1; % 0: No plots;
-normFlag  = 1; % 0: No normalization
+normFlag  = 0; % 0: No normalization
 
 %% Divide training testing and obtain locations where the place cells will be defined
 
@@ -45,14 +43,9 @@ queryLocations = linspace(sideSpanCm,...
     corrLen - (sideSpanCm),numQueries);
 
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
-%% Neural net training input:
+%% Neural net training input and target:
 
-[inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, debugFlag);
-
-%% Neural net target
-% 
-% target = neuralNetTarget(paramsDataset, paramsQuery, paramsTraining,...
-%     paramsCells, cellPositions, normFlag);
+[inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, normFlag, debugFlag);
 
 %% Train the network
 
@@ -61,23 +54,30 @@ net = newgrnn(inputNN, target);
 
 %% Neural net query
 
-% queryFrames = round(linspace(startQueryFrame,endQueryFrame,numQueries));
-queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, debugFlag);
+queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, normFlag, debugFlag);
 
 %%  Test (simulate)
 
 locEstimate = sim(net, queryNN);
 
-%% Query ground truth
+%% Bring estimates and query ground truth to same magnitude, and do repmat if more than one query pass
 
-% queryGt = getQueryGroundTruth(paramsTraining, paramsCells, queryFrames, allGroundTruth, normFlag);
+locEstCorrected = locEstimate +  queryLocations(round(end/2));
 
-%% Plots
+queryLocations = repmat(queryLocations,1,length(paramsQuery.querySet));
+
+%% Plots (with conversion to metres)
 figure
-plot(locEstimate); hold on; plot(queryGt)
+plot(locEstCorrected/100); hold on; plot(queryLocations/100);
+ylabel('Position (m)');
+xlabel('Query frame index');
+legend('Location Estimate','Ground Truth');
 
 %% Evaluate
 
-err = abs(locEstimate - queryGt);
+err = abs(locEstCorrected - queryLocations);
 
 meanErr = mean(err);
+
+% Conversion to metres
+meanErr/100 
