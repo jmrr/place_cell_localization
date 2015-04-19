@@ -4,18 +4,18 @@
 setup;
 
 % Number of cells desired for the experiment
-paramsCells.numCells = 16;
+paramsCells.numCells = 40; % 16
 
 % Number of observations
 numObservations  = 400;
 
 % Number of queries and range of frames to consider
-numQueries = 100;
+numQueries = 50; % 100
 
 % Flags
 
 debugFlag = 1; % 0: No plots;
-normFlag  = 0; % 0: No normalization
+normFlag  = 1; % 0: No normalization
 
 %% Divide training testing and obtain locations where the place cells will be defined
 
