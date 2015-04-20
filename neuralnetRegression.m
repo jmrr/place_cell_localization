@@ -4,7 +4,7 @@
 setup;
 
 % Number of cells desired for the experiment
-paramsCells.numCells = 16;
+paramsCells.numCells = 20;
 
 % Number of observations
 numObservations  = 400;
@@ -76,6 +76,10 @@ legend('Location Estimate','Ground Truth');
 %% Evaluate
 
 err = abs(locEstCorrected - queryLocations);
+figure
+plot(err/100,':o')
+ylabel('Absolute positional error (m)');
+xlabel('Query frame index');
 
 meanErr = mean(err);
 
