@@ -1,4 +1,4 @@
-function [inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, normFlag, debug)
+function [inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, normFlag)
 
 % Declare inputNN
 
@@ -50,7 +50,7 @@ inputNN = double(inputNN);
 
 %% Plots if debug
 
-if debug
+if paramsDataset.debug
     
     for k = 1:numTrainingPasses
         figure;
