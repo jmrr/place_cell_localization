@@ -23,8 +23,8 @@ for i = 1:length(methods)
    
    paramsDataset.descriptor = method;
    
-   evaluateNeuralNet(paramsDataset, paramsQuery, paramsCells, ...
-            paramsTraining, numObservations, numQueries, normFlag);
+   [locEstCorrected, queryLocations]= evaluateNeuralNet(paramsDataset, ...
+       paramsQuery, paramsCells, paramsTraining, numObservations, numQueries, normFlag);
    
     subplot(2,2,i)
     plot(locEstCorrected/100, '.', 'MarkerSize', 15);
