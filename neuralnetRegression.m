@@ -4,13 +4,13 @@
 setup;
 
 % Number of cells desired for the experiment
-paramsCells.numCells = 20;
+paramsCells.numCells = 20; % 40 % 16
 
 % Number of observations
 numObservations  = 400;
 
 % Number of queries and range of frames to consider
-numQueries = 100;
+numQueries = 50; % 100
 
 % Flags
 
