@@ -47,4 +47,4 @@ if (normFlag)
     
 end
 
-end % end function neuralNetInput
+end % end function neuralNetTestInput
