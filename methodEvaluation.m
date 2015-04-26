@@ -1,5 +1,8 @@
 methods = {'DSIFT', 'SF_GABOR', 'ST_GABOR', 'ST_GAUSS'};
 
+%% Initialize setup
+setup;
+
 %% User parameters
 
 % Number of cells desired for the experiment

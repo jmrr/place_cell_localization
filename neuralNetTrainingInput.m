@@ -6,7 +6,7 @@ inputNN = [];
 
 
 %% Get training kernels
-queriesForTraining = paramsQuery;
+queriesForTraining = paramsQuery; % Copying the paramsQuery struct  but reuising it to retrieve the NN training kernels.
 trainingSet        = paramsTraining.trainingSet;
 numTrainingPasses  = length(trainingSet);
 
@@ -40,7 +40,7 @@ end
 
 %% Target
 
-target = observations - observations(round(end/2));
+target = observations - observations(round(end/2)); % Observations to be restricted between +/- lastObservation/2
 
 target = repmat(target(1,:),1,numTrainingPasses);
 
@@ -71,4 +71,4 @@ if paramsDataset.debug
     end
 end
 
-end % end function neuralNetInput
+end % end function neuralNetTrainingInput

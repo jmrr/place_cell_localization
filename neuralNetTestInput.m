@@ -10,7 +10,7 @@ numQueryPasses  = length(querySet);
 trainingGt = getGroundTruth(paramsDataset, paramsQuery, trainingSet);
 queryGt = getGroundTruth(paramsDataset, paramsQuery, querySet);
 
-for i = 1:numQueryPasses %% CHANGE FOR ALL TRAINING PASSES
+for i = 1:numQueryPasses 
     activations = [];
     paramsQuery.queryPass = querySet(i);
     [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
