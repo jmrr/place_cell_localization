@@ -5,25 +5,17 @@
 % Load default parameters
 setup;
 
-% Number of cells desired for the experiment
-paramsCells.numCells = 20; % 40 % 16
 
-% Number of observations
-numObservations  = 400;
-
-% Number of queries and range of frames to consider
-numQueries = 100 ; % 100
-
-% Flags
-
-debugFlag = 1; % 0: No plots;
-normFlag  = 0; % 0: No normalization
-paramsDataset.debug = debugFlag;
 
 %% Neural network model
 
-[locEstimate, queryLocations] = neuralNetRegression(paramsDataset, paramsTraining, paramsCells, paramsQuery, ...
-            numObservations, numQueries, normFlag);
+model = NeuralNetworkRegression;
+model.setLocations(paramsDataset, paramsCells, paramsQuery)
+model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+model.train
+model.propagate
+
 
 %% Bring estimates and query ground truth to same magnitude, and do repmat if more than one query pass
 
