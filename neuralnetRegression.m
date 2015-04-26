@@ -1,3 +1,5 @@
+% Place cell neural net regression main script
+
 %% User parameters
 
 % Load default parameters
@@ -35,7 +37,7 @@ cmPerFrame = corrLen/length(allGroundTruth{shortest});
 
 sideSpanCm = paramsCells.sideSpan*cmPerFrame;
 
-cellPositions = linspace(sideSpanCm,...        % Position of place cells in cm
+cellLocations = linspace(sideSpanCm,...        % Position of place cells in cm
     corrLen -(sideSpanCm),paramsCells.numCells);
 
 observations = linspace(sideSpanCm,...          % Position of training observations in cm
@@ -47,7 +49,7 @@ queryLocations = linspace(sideSpanCm,...        % Position of queries used for t
 % REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
 %% Neural net training input and target:
 
-[inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, normFlag);
+[inputNN, target] = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, observations, cellLocations, normFlag);
 
 %% Train the network
 
@@ -56,7 +58,7 @@ net = newgrnn(inputNN, target);
 
 %% Neural net query
 
-queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, normFlag);
+queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, queryLocations, normFlag);
 
 %%  Test (simulate)
 

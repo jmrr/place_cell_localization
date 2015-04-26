@@ -1,5 +1,25 @@
-function [inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, normFlag)
+function [inputNN, target] = neuralNetTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, observations, cellLocations, normFlag)
+% NEURALNETTRAININGINPUT constructs the RxQ matrix of input vectos and SxQ
+% matrix of target vectors for the training of a generalized regression
+% neural network.
+%
+% Inputs: 
+%   - parameters: paramsX, X: [Dataset, Training, Query, Cells]
+%   - observations: vector of N observation locations. R = Q if only one
+%   group of examples, otherwise R = N x m, where m is the number of examples. i.e.,
+%   number of training passes.
+%   - cellLocations: vector of R place cell locations
+%   - normFlag: normalization flag (experimental)
+%
+% Outputs:
+%   - inputNN: RxQ matrix of Q input vectors "training activations"
+%   - target: SxQ matrix of Q target vectors
+%
+% See also NEWGRNN, NEURALNETTESTINPUT
 
+% Authors: Jose Rivera-Rubio
+%          {jose.rivera}@imperial.ac.uk
+% Date: April, 2015
 % Declare inputNN
 
 inputNN = [];

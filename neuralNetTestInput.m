@@ -1,4 +1,18 @@
-function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, normFlag)
+function [testInputNN] = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellLocations, queryLocations, normFlag)
+% NEURALNETESTINPUT constructs the RxT matrix of query vectors for the propagation of a generalized regression
+% neural network.
+%
+% Inputs: 
+%   - parameters: paramsX, X: [Dataset, Training, Query, Cells]
+%   - cellLocations: vector of L place cell locations
+%   - queryLocations: vector of M query locations.
+%   - normFlag: normalization flag (experimental)
+%
+% Output:
+%   - testInputNN: RxT matrix of T query vectors, or "activations"
+%
+% See also NEWGRNN, NEURALNETTRAININGINPUT
+
 
 testInputNN = [];
 
@@ -17,7 +31,7 @@ for i = 1:numQueryPasses
     kernels = results.Kernel;
     
     for k = 1:length(kernels)
-        cellFrames = frameFromGroundTruth(trainingGt{k}, cellPositions);
+        cellFrames  = frameFromGroundTruth(trainingGt{k}, cellLocations);
         queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations);
         
         activations{k} = kernels{k}(queryFrames, cellFrames)';

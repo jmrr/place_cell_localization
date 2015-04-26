@@ -1,5 +1,16 @@
 function normCell = normalizeCells(currCell, paramsCells, thresh)
+% NORMALIZECELLS produces a normalization of a place cell with thresholding
+% and optional smoothing. The normalization follows the formula (after
+% thresholding:
+%   normX = (x - thresh)/(max-thresh)
+% This produces a [0,1] normalizations
+
 % thresh is a heuristic from eye-ball inspection
+
+% Authors: Jose Rivera-Rubio
+%          {jose.rivera}@imperial.ac.uk
+% Date: April, 2015
+
 
 % First threshold to a min
 

@@ -1,15 +1,16 @@
 function [activations] = getActivationValues(observations, kernels, groundTruth, trainingPass, paramsTraining, paramsCells, cellLocations)
+% GETACTIVATIONVALUES constructs the tuning curves from the BOVW kernels
 
-
+% Authors: Jose Rivera-Rubio
+%          {jose.rivera}@imperial.ac.uk
+% Date: April, 2015
 
 for k = 1:length(kernels)
-        
-        observationsFrames = frameFromGroundTruth(groundTruth{trainingPass}, observations);
-        
-        cellFrames = frameFromGroundTruth(groundTruth{k}, cellLocations);
-
-        activations{k} = kernels{k}(observationsFrames, cellFrames)';
-        
+    observationsFrames = frameFromGroundTruth(groundTruth{trainingPass}, observations);
+    
+    cellFrames = frameFromGroundTruth(groundTruth{k}, cellLocations);
+    
+    activations{k} = kernels{k}(observationsFrames, cellFrames)';
 end
 
 
