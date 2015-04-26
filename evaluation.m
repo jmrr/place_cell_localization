@@ -6,19 +6,7 @@ setup;
 
 %% User parameters
 
-% Number of cells desired for the experiment
-paramsCells.numCells = 20;
-
-% Number of observations
-numObservations  = 400;
-
-% Number of queries and range of frames to consider
-numQueries = 100;
-
-% Flags
-
-debugFlag = 0; % 0: No plots;
-normFlag  = 0; % 0: No normalization
+model = NeuralNetworkRegression;
 
 % BATCH
 
@@ -28,7 +16,7 @@ for i = 1:length(methods)
    paramsDataset.descriptor = method;
    
    [locEstCorrected, queryLocations]= evaluateNeuralNet(paramsDataset, ...
-       paramsQuery, paramsCells, paramsTraining, numObservations, numQueries, normFlag);
+       paramsQuery, paramsCells, paramsTraining);
    
     subplot(2,2,i)
     plot(locEstCorrected/100, '.', 'MarkerSize', 15);

@@ -1,35 +1,24 @@
 function [locEstCorrected, queryLocations, err] = ...
     evaluateNeuralNet(paramsDataset, paramsQuery, paramsCells, ...
-            paramsTraining, numObservations, numQueries, normFlag)
+            paramsTraining)
 
-%% Divide training testing and obtain locations where the place cells will be defined
+% Neural network model
 
-[observations, ~, queryLocations] = locations(...
-    paramsDataset, paramsCells, paramsQuery, numObservations, numQueries);
+model = NeuralNetworkRegression;
+model.setLocations(paramsDataset, paramsCells, paramsQuery)
+model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+model.train;
 
-% REVISE HERE, AS I'M TAKING THE MEAN AND NOT THE MULTIPLE TRAINING PASSES.
-%% Neural net training input and target:
+% Retrieve outputs from propagated model
 
-[inputNN, target] = neuralNetTrainingInput(observations, paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, normFlag);
-
-%% Train the network
-
-net = newgrnn(inputNN, target);
-
-
-%% Neural net query
-
-queryNN = neuralNetTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells, cellPositions, queryLocations, normFlag);
-
-%%  Test (simulate)
-
-locEstimate = sim(net, queryNN);
+locEstimate = model.propagate;        
 
 %% Bring estimates and query ground truth to same magnitude, and do repmat if more than one query pass
 
-locEstCorrected = locEstimate +  queryLocations(round(end/2));
+locEstCorrected = locEstimate +  model.QueryLocations(round(end/2));
 
-queryLocations = repmat(queryLocations,1,length(paramsQuery.querySet));
+queryLocations = repmat(model.QueryLocations,1,length(paramsQuery.querySet));
 
 %% Evaluate
 
