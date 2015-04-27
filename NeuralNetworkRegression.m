@@ -49,7 +49,7 @@ classdef NeuralNetworkRegression < handle
             
             numObservations = obj.NumObservations;
             numQueries = obj.NumQueries;
-            
+            paramsCells.numCells = obj.NumCells;
             [obj.Observations, obj.CellLocations, obj.QueryLocations] =...
                 locations(paramsDataset, paramsCells, paramsQuery, numObservations, numQueries);
             
@@ -57,6 +57,8 @@ classdef NeuralNetworkRegression < handle
         
         function nnTrainingInput(obj, paramsDataset, paramsTraining, paramsQuery, paramsCells)
             
+            paramsCells.numCells = obj.NumCells;
+
             [obj.Input, obj.Target] = neuralNetTrainingInput(...
                 paramsDataset, paramsTraining, paramsQuery, paramsCells,...
                 obj.Observations, obj.CellLocations, obj.NormFlag);
