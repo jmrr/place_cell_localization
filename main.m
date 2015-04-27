@@ -7,7 +7,8 @@ setup;
 
 %% Neural network model
 
-model = NeuralNetworkRegression;
+% model = NeuralNetworkRegression;
+model = NeuralNetworkRegression(16, 400, 100, 0);
 model.setLocations(paramsDataset, paramsCells, paramsQuery)
 model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
