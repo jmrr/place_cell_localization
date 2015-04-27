@@ -1,4 +1,4 @@
-function [locEstCorrected, queryLocations, err] = ...
+function [locEstCorrected, queryLocations, err, meanErr] = ...
     evaluateNeuralNet(paramsDataset, paramsQuery, paramsCells, ...
             paramsTraining)
 
@@ -25,6 +25,6 @@ queryLocations = repmat(model.QueryLocations,1,length(paramsQuery.querySet));
 err = abs(locEstCorrected - queryLocations);
 meanErr = mean(err);
 % Conversion to metres
-meanErr/100
+meanErr/100;
 
 end

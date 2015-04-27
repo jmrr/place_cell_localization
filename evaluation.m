@@ -15,7 +15,7 @@ for i = 1:length(methods)
    
    paramsDataset.descriptor = method;
    
-   [locEstCorrected, queryLocations]= evaluateNeuralNet(paramsDataset, ...
+   [locEstCorrected, queryLocations, err, meanErr] = evaluateNeuralNet(paramsDataset, ...
        paramsQuery, paramsCells, paramsTraining);
    
     subplot(2,2,i)
