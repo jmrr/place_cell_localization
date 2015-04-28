@@ -60,8 +60,7 @@ end
 
 %% Target
 
-target = observations - observations(round(end/2)); % Observations to be restricted between +/- lastObservation/2
-
+target = observations - observations(round(end/2)); % Observations locations to be restricted between +/- lastObservation/2
 target = repmat(target(1,:),1,numTrainingPasses);
 
 %% Output
