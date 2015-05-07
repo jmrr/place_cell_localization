@@ -30,10 +30,10 @@ for i = 1:numQueryPasses
     [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
     kernels = results.Kernel;
     
+    queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations);
+    
     for k = 1:length(kernels)
         cellFrames  = frameFromGroundTruth(trainingGt{k}, cellLocations);
-        queryFrames = frameFromGroundTruth(queryGt{i}, queryLocations);
-        
         activations{k} = kernels{k}(queryFrames, cellFrames)';
     end
     

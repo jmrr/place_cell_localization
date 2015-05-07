@@ -16,8 +16,8 @@ classdef MaxResponse < NeuralNetworkRegression
         end
     end
     methods
-        function obj = getMaxResponse(obj, paramsDataset, paramsTraining, paramsQuery)
-            trainingSet     = paramsTraining.trainingSet;
+        function locEstimate = getMaxResponse(obj, paramsDataset, paramsTraining, paramsQuery)
+            trainingSet     = randi(length(paramsTraining.trainingSet)); % TODO: Change to more than one training pass -> trainingSet = paramsTraining.trainingSet
             querySet        = paramsQuery.querySet;
             numQueryPasses  = length(querySet);
             
@@ -30,21 +30,27 @@ classdef MaxResponse < NeuralNetworkRegression
                 [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
                 kernels = results.Kernel;
                 
-                for k = 1:length(kernels)
-                    queryFrames = frameFromGroundTruth(queryGt{i}, obj.QueryLocations);
-                    
-                    activations{k} = kernels{k}(queryFrames, :)';
+                queryFrames = frameFromGroundTruth(queryGt{i}, obj.QueryLocations);
+                
+%                 % ToDo. Correct kernels with ground truth
+%                 for k = 1:length(trainingSet)          
+%                     activations{k} = kernels{k}(queryFrames, :)';
+%                 end
+                
+                     activations{1} = kernels{trainingSet}(queryFrames, :)';
+
+                [maxCell, idxCell]  = cellfun(@(x) max(x,[],1), activations, 'UniformOutput', 0);
+                maxArray            = cell2mat(maxCell');
+                idxArray            = cell2mat(idxCell');
+                
+                [~, idx1] = max(maxArray, [], 1);
+                
+                for j = 1:size(idxArray,2)
+                    idxMaxActivations(j) = idxArray(idx1(j), j);
+                    locEstimate(j) = queryGt{1}(idxMaxActivations(j));
                 end
-            [maxCell, idxCell]  = cellfun(@(x) max(x,[],1), activations, 'UniformOutput', 0);
-            maxArray            = cell2mat(maxCell'); 
-            idxArray            = cell2mat(idxCell');
-            
-            [~, idx1] = max(maxArray, [], 1);
-            
-            for j = 1:size(idxArray,2)          
-                idxMaxActivations(j) = idxArray(idx1(j), j);
-            end
-            
+                
+                
             end
         end
     end

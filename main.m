@@ -55,5 +55,34 @@ end
 mr = MaxResponse(16, 200, 400, 0);
 mr.setLocations(paramsDataset, paramsCells, paramsQuery)
 mr.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+locEstimate = mr.getMaxResponse(paramsDataset, paramsTraining, paramsQuery);
+
+%Evaluate 
+
+queryLocations = repmat(mr.QueryLocations,1,length(paramsQuery.querySet));
 
 
+% Plots (with conversion to metres)
+if(paramsDataset.debug)
+    figure
+    plot(locEstimate/100, '.', 'MarkerSize', 15);
+    hold on;
+    plot(queryLocations/100,'.', 'MarkerSize', 15);
+    ylabel('Position (m)');
+    xlabel('Query frame index');
+    legend('Location Estimate','Ground Truth');
+end
+
+
+err = abs(locEstimate - queryLocations);
+meanErr = mean(err);
+% Conversion to metres
+meanErr/100
+
+%Plot
+if(paramsDataset.debug)
+    figure
+    plot(err/100,':o')
+    ylabel('Absolute positional error (m)');
+    xlabel('Query frame index');
+end
