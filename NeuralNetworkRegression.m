@@ -23,15 +23,16 @@ classdef NeuralNetworkRegression < handle
         Input;
         Target;
         
-        % neural net
-        Net;
-        
         % query
         Query;
         
         % location estimate
         LocEstimate;
         
+    end
+    properties (SetAccess = private)
+        % neural net (doesn't get inherited)
+        Net;
     end
     methods (Static)
         % Constructor
@@ -58,7 +59,6 @@ classdef NeuralNetworkRegression < handle
         function nnTrainingInput(obj, paramsDataset, paramsTraining, paramsQuery, paramsCells)
             
             paramsCells.numCells = obj.NumCells;
-
             [obj.Input, obj.Target] = neuralNetTrainingInput(...
                 paramsDataset, paramsTraining, paramsQuery, paramsCells,...
                 obj.Observations, obj.CellLocations, obj.NormFlag);

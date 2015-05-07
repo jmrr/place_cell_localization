@@ -49,3 +49,11 @@ if(paramsDataset.debug)
     ylabel('Absolute positional error (m)');
     xlabel('Query frame index');
 end
+
+%% Max
+
+mr = MaxResponse(16, 200, 400, 0);
+mr.setLocations(paramsDataset, paramsCells, paramsQuery)
+mr.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
+
+
