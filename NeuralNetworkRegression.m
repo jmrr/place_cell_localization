@@ -30,7 +30,7 @@ classdef NeuralNetworkRegression < handle
         LocEstimate;
         
     end
-    properties (SetAccess = private, Hidden = true)
+    properties (SetAccess = private)
         % neural net (doesn't get inherited)
         Net;
     end
