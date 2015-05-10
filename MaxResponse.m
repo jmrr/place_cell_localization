@@ -1,7 +1,7 @@
 classdef MaxResponse < NeuralNetworkRegression
     
     properties (SetAccess = private)
-        Max
+        DistMax % Distance between max estimates
     end
     
     methods (Static)
@@ -17,7 +17,8 @@ classdef MaxResponse < NeuralNetworkRegression
     end
     methods
         function locEstimate = getMaxResponse(obj, paramsDataset, paramsTraining, paramsQuery)
-            trainingSet     = randi(length(paramsTraining.trainingSet)); % TODO: Change to more than one training pass -> trainingSet = paramsTraining.trainingSet
+            trainingIdx = randi(length(paramsTraining.trainingSet)); % TODO: Change to more than one training pass -> trainingSet = paramsTraining.trainingSet
+            trainingSet     = paramsTraining.trainingSet(trainingIdx);
             querySet        = paramsQuery.querySet;
             numQueryPasses  = length(querySet);
             
@@ -30,6 +31,7 @@ classdef MaxResponse < NeuralNetworkRegression
                 [results] = getKernel(paramsDataset, paramsTraining, paramsQuery);
                 kernels = results.Kernel;
                 
+                cellFrames  = frameFromGroundTruth(trainingGt{1}, obj.CellLocations);
                 queryFrames = frameFromGroundTruth(queryGt{i}, obj.QueryLocations);
                 
 %                 % ToDo. Correct kernels with ground truth
@@ -37,9 +39,9 @@ classdef MaxResponse < NeuralNetworkRegression
 %                     activations{k} = kernels{k}(queryFrames, :)';
 %                 end
                 
-                     activations{1} = kernels{trainingSet}(queryFrames, :)';
+                     activations{1} = kernels{trainingIdx}(queryFrames, cellFrames)';
 
-                [maxCell, idxCell]  = cellfun(@(x) max(x,[],1), activations, 'UniformOutput', 0);
+                [maxCell, idxCell]  = cellfun(@(x) max(x,[], 1), activations, 'UniformOutput', 0);
                 maxArray            = cell2mat(maxCell');
                 idxArray            = cell2mat(idxCell');
                 
@@ -47,11 +49,11 @@ classdef MaxResponse < NeuralNetworkRegression
                 
                 for j = 1:size(idxArray,2)
                     idxMaxActivations(j) = idxArray(idx1(j), j);
-                    locEstimate(j) = queryGt{1}(idxMaxActivations(j));
+                    locEstimate(j) = queryGt{1}(cellFrames(idxMaxActivations(j)));
                 end
-                
-                
             end
+            obj.LocEstimate = locEstimate;
+            obj.DistMax     = obj.CellLocations(2) - obj.CellLocations(1);
         end
     end
     

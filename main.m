@@ -52,7 +52,7 @@ end
 
 %% Max
 
-mr = MaxResponse(16, 200, 400, 0);
+mr = MaxResponse(40, 200, 400, 0);
 mr.setLocations(paramsDataset, paramsCells, paramsQuery)
 mr.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 locEstimate = mr.getMaxResponse(paramsDataset, paramsTraining, paramsQuery);
