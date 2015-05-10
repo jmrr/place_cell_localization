@@ -7,11 +7,13 @@ classdef MaxResponse < NeuralNetworkRegression
     methods (Static)
         % Constructor
         function obj = MaxResponse(varargin)
-            if nargin > 1
+            if nargin >= 2
                 obj.NumCells = varargin{1};
                 obj.NumObservations = varargin{2};
                 obj.NumQueries = varargin{3};
                 obj.NormFlag = varargin{4};
+            elseif nargin > 0 && nargin < 2 
+                obj.NumCells = varargin{1};
             end
         end
     end
@@ -49,7 +51,11 @@ classdef MaxResponse < NeuralNetworkRegression
                 
                 for j = 1:size(idxArray,2)
                     idxMaxActivations(j) = idxArray(idx1(j), j);
-                    locEstimate(j) = queryGt{1}(cellFrames(idxMaxActivations(j)));
+                    try
+                    locEstimate(j) = trainingGt{1}(cellFrames(idxMaxActivations(j)));
+                    catch
+                        error('error');
+                    end
                 end
             end
             obj.LocEstimate = locEstimate;
