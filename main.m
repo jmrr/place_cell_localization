@@ -8,11 +8,13 @@ setup;
 %% Neural network model
 
 % model = NeuralNetworkRegression;
-model = NeuralNetworkRegression(16, 200, 400, 0);
+model = NeuralNetworkRegression(16, 200, 400, 2);
 model.setLocations(paramsDataset, paramsCells, paramsQuery)
 model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 model.train;
+% Plot all tuning curves
+figure;model.plotTuningCurves(paramsCells, paramsDataset, paramsQuery, paramsTraining)
 
 % Retrieve outputs from propagated model
 
@@ -20,7 +22,7 @@ locEstimate = model.propagate;
 
 %% Bring estimates and query ground truth to same magnitude, and do repmat if more than one query pass
 
-locEstCorrected = locEstimate +  model.QueryLocations(round(end/2));
+locEstCorrected = correctLocEstimates(locEstimate, model);
 
 queryLocations = repmat(model.QueryLocations,1,length(paramsQuery.querySet));
 
@@ -40,6 +42,7 @@ end
 err = abs(locEstCorrected - queryLocations);
 meanErr = mean(err);
 % Conversion to metres
+fprintf('Mean error in m')
 meanErr/100
 
 %Plot
@@ -77,6 +80,7 @@ end
 err = abs(locEstimate - queryLocations);
 meanErr = mean(err);
 % Conversion to metres
+fprintf('Mean error in m')
 meanErr/100
 
 %Plot

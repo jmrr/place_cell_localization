@@ -12,7 +12,7 @@ classdef NeuralNetworkRegression < handle
         NumQueries = 100 ; % 100
         
         % Flags
-        NormFlag  = 0; % 0: No normalization
+        NormFlag  = 0; % 0: Thresholding only, 1: thresholding and scaling, 2: thresholding and [0:1] normalization.
         
         % Locations
         Observations;
@@ -49,7 +49,7 @@ classdef NeuralNetworkRegression < handle
         function setLocations(obj, paramsDataset, paramsCells, paramsQuery)
             
             numObservations = obj.NumObservations;
-            numQueries = obj.NumQueries;
+            numQueries      = obj.NumQueries;
             paramsCells.numCells = obj.NumCells;
             [obj.Observations, obj.CellLocations, obj.QueryLocations, obj.FramesCorr] =...
                 locations(paramsDataset, paramsCells, paramsQuery, numObservations, numQueries);
@@ -71,16 +71,16 @@ classdef NeuralNetworkRegression < handle
             obj.Net = newgrnn(obj.Input, obj.Target);
         end
         function locEstimate = propagate(obj)
-            locEstimate = sim(obj.Net, obj.Query);
+            locEstimate     = sim(obj.Net, obj.Query);
             obj.LocEstimate = locEstimate;
         end
         function plotTuningCurves(obj, paramsCells, paramsDataset, paramsQuery, paramsTraining)
-            activations = reshape(obj.Input, obj.NumCells, obj.NumObservations, []);
+            activations     = reshape(obj.Input, obj.NumCells, obj.NumObservations, []);
             meanActivations = squeeze(mean(activations, 3));
-            midPoint = length(meanActivations)/2;
-            sideSpan = paramsCells.sideSpan;
-            trainingGt = getGroundTruth(paramsDataset,paramsQuery,paramsTraining.trainingSet);
-            cellFrames = frameFromGroundTruth(trainingGt{1}, obj.CellLocations);
+            midPoint        = length(meanActivations)/2;
+            sideSpan        = paramsCells.sideSpan;
+            trainingGt      = getGroundTruth(paramsDataset,paramsQuery,paramsTraining.trainingSet);
+            cellFrames      = frameFromGroundTruth(trainingGt{1}, obj.CellLocations);
 
             for i = 1:obj.NumCells
                 [lb, ub] = getBounds(cellFrames(i), sideSpan, obj.FramesCorr);

@@ -49,16 +49,20 @@ end
 
 testInputNN = double(testInputNN);
 
-% Thresholding
+%% Normalization/thresholding/scaling
 
-testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
-
-% Normalization
-if (normFlag)
-    
+if (~normFlag)
+    % Thresholding
+    testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
+elseif (normFlag == 1)
+    % Thresholding and scaling
+    testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
+    totalMax = max(testInputNN(:));
+    testInputNN = testInputNN./totalMax;
+elseif (normFlag > 1)
+    % [0-1] normalization
     totalMax = max(testInputNN(:));
     testInputNN = (testInputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
-    
 end
 
 end % end function neuralNetTestInput

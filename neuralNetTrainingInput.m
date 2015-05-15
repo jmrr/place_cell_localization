@@ -3,7 +3,7 @@ function [inputNN, target] = neuralNetTrainingInput(paramsDataset, paramsTrainin
 % matrix of target vectors for the training of a generalized regression
 % neural network.
 %
-% Inputs: 
+% Inputs:
 %   - parameters: paramsX, X: [Dataset, Training, Query, Cells]
 %   - observations: vector of N observation locations. R = Q if only one
 %   group of examples, otherwise R = N x m, where m is the number of examples. i.e.,
@@ -45,31 +45,36 @@ for i = 1:numTrainingPasses
     
 end
 
-% Thresholding and scaling
-
-totalMax = max(inputNN(:));
-intputNN = inputNN./totalMax;
-
-inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
-
-
-% Normalization
-
-if (normFlag)
-    
-    totalMax = max(inputNN(:));
-    inputNN = (inputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
-    
-end
-
-%% Target
-
-target = observations - observations(round(end/2)); % Observations locations to be restricted between +/- lastObservation/2
-target = repmat(target(1,:),1,numTrainingPasses);
 
 %% Output
 
-inputNN = double(inputNN);
+inputNN = double(inputNN);  
+
+
+%% Normalization/thresholding/scaling
+
+if (~normFlag)
+    % Thresholding
+    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
+elseif (normFlag == 1)
+    % Thresholding and scaling
+    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
+    totalMax = max(inputNN(:));
+    inputNN = inputNN./totalMax;
+elseif (normFlag > 1)
+    % [0-1] normalization
+    totalMax = max(inputNN(:));
+    inputNN = (inputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
+end
+
+%% Target
+if (normFlag > 0)
+    target = observations./max(observations);
+else  
+    target = observations - observations(round(end/2)); % Observations locations to be restricted between +/- lastObservation/2
+end
+target = repmat(target(1,:),1,numTrainingPasses);
+
 
 %% Plots if debug
 
