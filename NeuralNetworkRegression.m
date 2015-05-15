@@ -18,7 +18,7 @@ classdef NeuralNetworkRegression < handle
         Observations;
         CellLocations;
         QueryLocations;
-        
+        FramesCorr;
         % inputs
         Input;
         Target;
@@ -51,11 +51,10 @@ classdef NeuralNetworkRegression < handle
             numObservations = obj.NumObservations;
             numQueries = obj.NumQueries;
             paramsCells.numCells = obj.NumCells;
-            [obj.Observations, obj.CellLocations, obj.QueryLocations] =...
+            [obj.Observations, obj.CellLocations, obj.QueryLocations, obj.FramesCorr] =...
                 locations(paramsDataset, paramsCells, paramsQuery, numObservations, numQueries);
             
         end
-        
         function nnTrainingInput(obj, paramsDataset, paramsTraining, paramsQuery, paramsCells)
             
             paramsCells.numCells = obj.NumCells;
@@ -74,6 +73,21 @@ classdef NeuralNetworkRegression < handle
         function locEstimate = propagate(obj)
             locEstimate = sim(obj.Net, obj.Query);
             obj.LocEstimate = locEstimate;
+        end
+        function plotTuningCurves(obj, paramsCells, paramsDataset, paramsQuery, paramsTraining)
+            activations = reshape(obj.Input, obj.NumCells, obj.NumObservations, []);
+            meanActivations = squeeze(mean(activations, 3));
+            midPoint = length(meanActivations)/2;
+            sideSpan = paramsCells.sideSpan;
+            trainingGt = getGroundTruth(paramsDataset,paramsQuery,paramsTraining.trainingSet);
+            cellFrames = frameFromGroundTruth(trainingGt{1}, obj.CellLocations);
+
+            for i = 1:obj.NumCells
+                [lb, ub] = getBounds(cellFrames(i), sideSpan, obj.FramesCorr);
+                plot(lb:ub, smooth(meanActivations(i,midPoint-sideSpan:midPoint+sideSpan-1),paramsCells.smoothFac));
+                hold on;
+            end
+            
         end
     end
 end

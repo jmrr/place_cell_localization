@@ -45,9 +45,13 @@ for i = 1:numTrainingPasses
     
 end
 
-% Thresholding
+% Thresholding and scaling
+
+totalMax = max(inputNN(:));
+intputNN = inputNN./totalMax;
 
 inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
+
 
 % Normalization
 
@@ -86,7 +90,6 @@ if paramsDataset.debug
         ylabel('Thresholded chi2 score.');
         title(['Place cells responses to training observations on training pass ' num2str(k)]);
         legend(legStr);
-
     end
 end
 

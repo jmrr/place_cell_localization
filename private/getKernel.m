@@ -1,7 +1,12 @@
 function [results] = getKernel(paramsDataset, paramsTraining, paramsQuery)
 % GETKERNEL retrieves the bag of visual words kernelized representation of
 % histogram distances. It takes the parameters of the dataset, training
-% and query sets 
+% and query sets
+%
+% Usage:
+% [results] = getKernel(paramsDataset, paramsTraining, paramsQuery)
+% kernels = results.Kernel;
+
 
 % Authors: Jose Rivera-Rubio
 %          {jose.rivera}@imperial.ac.uk

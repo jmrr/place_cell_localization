@@ -1,8 +1,8 @@
 function [lowerBound, upperBound] = getBounds(fr, sideSpan, lengthCurve)
-% GETBOUNDS (deprecated, to be removed in next version). Given a central
-% frame fr, the side span of a place cell and the length of the complete
-% sequence, calculate the lower and upper bounds for an interval of length
-% 2*sideSpan that does not go beyond the bounds of the sequence.
+% GETBOUNDS Given a central frame fr, the side span of a place cell and the
+% length of the complete sequence, calculate the lower and upper bounds for
+% an interval of length 2*sideSpan that does not go beyond the bounds of
+% the sequence.
 %
 
 % Authors: Jose Rivera-Rubio

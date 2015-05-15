@@ -1,4 +1,4 @@
-function [observations, cellLocations, queryLocations] = locations(...
+function [observations, cellLocations, queryLocations, framesCorr] = locations(...
     paramsDataset, paramsCells, paramsQuery, numObservations, numQueries)
 % Of the 10 passes, paramsTraining.trainingSet have been used for creating the dictionary,
 % and the queries must come from one, or more of the remaining passes that
@@ -10,8 +10,8 @@ function [observations, cellLocations, queryLocations] = locations(...
 % Load corridor length in centimetres.
 corrLengths         = cellfun(@(x) max(x),allGroundTruth);
 [corrLen, shortest] = min(corrLengths); % The minimum length will be the final length of the corridor
-
-cmPerFrame = corrLen/length(allGroundTruth{shortest});
+framesCorr = length(allGroundTruth{shortest});
+cmPerFrame = corrLen/framesCorr;
 
 sideSpanCm = paramsCells.sideSpan*cmPerFrame;
 
