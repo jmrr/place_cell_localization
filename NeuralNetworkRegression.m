@@ -68,7 +68,7 @@ classdef NeuralNetworkRegression < handle
                 obj.QueryLocations, obj.NormFlag);
         end
         function train(obj)
-            obj.Net = newgrnn(obj.Input, obj.Target);
+            obj.Net = newgrnn(obj.Input, obj.Target, 0.1);
         end
         function locEstimate = propagate(obj)
             locEstimate     = sim(obj.Net, obj.Query);
