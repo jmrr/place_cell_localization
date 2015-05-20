@@ -46,11 +46,6 @@ for i = 1:numTrainingPasses
 end
 
 
-%% Output
-
-inputNN = double(inputNN);  
-
-
 %% Normalization/thresholding/scaling
 
 if (~normFlag)
@@ -63,6 +58,8 @@ elseif (normFlag == 1)
     inputNN = inputNN./totalMax;
 elseif (normFlag > 1)
     % [0-1] normalization
+    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
+    
     totalMax = max(inputNN(:));
     inputNN = (inputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
 end
@@ -75,6 +72,9 @@ else
 end
 target = repmat(target(1,:),1,numTrainingPasses);
 
+%% Output
+
+inputNN = double(inputNN);  
 
 %% Plots if debug
 
