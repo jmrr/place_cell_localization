@@ -33,6 +33,7 @@ classdef NeuralNetworkRegression < handle
     properties (SetAccess = private)
         % neural net (doesn't get inherited)
         Net;
+        Spread = 0.1;
     end
     methods (Static)
         % Constructor
@@ -68,7 +69,7 @@ classdef NeuralNetworkRegression < handle
                 obj.QueryLocations, obj.NormFlag);
         end
         function train(obj)
-            obj.Net = newgrnn(obj.Input, obj.Target, 0.1);
+            obj.Net = newgrnn(obj.Input, obj.Target, obj.Spread);
         end
         function locEstimate = propagate(obj)
             locEstimate     = sim(obj.Net, obj.Query);
