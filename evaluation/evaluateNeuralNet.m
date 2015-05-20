@@ -16,7 +16,7 @@ locEstimate = model.propagate;
 
 %% Bring estimates and query ground truth to same magnitude, and do repmat if more than one query pass
 
-locEstCorrected = locEstimate +  model.QueryLocations(round(end/2));
+locEstCorrected = correctLocEstimates(locEstimate, model);
 
 queryLocations = repmat(model.QueryLocations,1,length(paramsQuery.querySet));
 

@@ -20,7 +20,7 @@ for i = 1:numTrials
     
     lenCells = sum(thresPlCells(:))/...
         (model.NumCells*length(paramsQuery.querySet)*length(paramsTraining.trainingSet));
-    %queryLocations(1) = sideSpanCm
+
     metresPerFrame = ((queryLocations(1)/(paramsCells.sideSpan))/100);
     lenCellsMetres(i) = lenCells*metresPerFrame;
 end
