@@ -45,36 +45,13 @@ for i = 1:numTrainingPasses
     
 end
 
+%% Normalization/thresholding/scaling of the inputs
 
-%% Normalization/thresholding/scaling
-
-if (~normFlag)
-    % Thresholding
-    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
-elseif (normFlag == 1)
-    % Thresholding and scaling
-    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
-    totalMax = max(inputNN(:));
-    inputNN = inputNN./totalMax;
-elseif (normFlag > 1)
-    % [0-1] normalization
-    inputNN(inputNN <= paramsCells.threshold) = paramsCells.threshold;
-    
-    totalMax = max(inputNN(:));
-    inputNN = (inputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
-end
+inputNN = normalizeActivations(inputNN, paramsCells, normFlag);
 
 %% Target
-if (normFlag > 0)
-    target = observations./max(observations);
-else  
-    target = observations - observations(round(end/2)); % Observations locations to be restricted between +/- lastObservation/2
-end
-target = repmat(target(1,:),1,numTrainingPasses);
 
-%% Output
-
-inputNN = double(inputNN);  
+target = normalizeTargets(observations, normFlag, numTrainingPasses);
 
 %% Plots if debug
 

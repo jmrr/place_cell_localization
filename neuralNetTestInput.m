@@ -47,22 +47,9 @@ for i = 1:numQueryPasses
     testInputNN = [testInputNN activations];
 end
 
-testInputNN = double(testInputNN);
 
-%% Normalization/thresholding/scaling
+%% Normalization/thresholding/scaling of testInput
 
-if (~normFlag)
-    % Thresholding
-    testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
-elseif (normFlag == 1)
-    % Thresholding and scaling
-    testInputNN(testInputNN <= paramsCells.threshold) = paramsCells.threshold;
-    totalMax = max(testInputNN(:));
-    testInputNN = testInputNN./totalMax;
-elseif (normFlag > 1)
-    % [0-1] normalization
-    totalMax = max(testInputNN(:));
-    testInputNN = (testInputNN - paramsCells.threshold)/(totalMax - paramsCells.threshold);
-end
+testInputNN = normalizeActivations(testInputNN, paramsCells, normFlag);
 
 end % end function neuralNetTestInput
