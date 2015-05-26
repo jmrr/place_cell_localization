@@ -4,7 +4,7 @@ function [locEstCorrected, queryLocations, model, err, meanErr] = ...
 
 % Neural network model
 
-model = NeuralNetworkRegression;
+model = NeuralNetworkRegression(paramsCells.numCells, 200, 400, 0, 1);
 model.setLocations(paramsDataset, paramsCells, paramsQuery)
 model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)

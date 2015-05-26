@@ -38,11 +38,17 @@ classdef NeuralNetworkRegression < handle
     methods (Static)
         % Constructor
         function obj = NeuralNetworkRegression(varargin)
-            if nargin > 1
+            if nargin > 1 && nargin <= 4
+                obj.NumCells        = varargin{1};
+                obj.NumObservations = varargin{2};
+                obj.NumQueries      = varargin{3};
+                obj.NormFlag        = varargin{4};
+            elseif nargin > 4
                 obj.NumCells = varargin{1};
                 obj.NumObservations = varargin{2};
-                obj.NumQueries = varargin{3};
-                obj.NormFlag = varargin{4};
+                obj.NumQueries      = varargin{3};
+                obj.NormFlag        = varargin{4};
+                obj.Spread          = varargin{5};
             end
         end
     end

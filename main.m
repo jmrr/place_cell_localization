@@ -8,7 +8,7 @@ setup;
 %% Neural network model
 
 % model = NeuralNetworkRegression;
-model = NeuralNetworkRegression(16, 200, 400, 2);
+model = NeuralNetworkRegression(16, 200, 400, 0); % 0: Thresholding only, 1: thresholding and scaling, 2: thresholding and [0:1] normalization.
 model.setLocations(paramsDataset, paramsCells, paramsQuery)
 model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
 model.nnTestInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)

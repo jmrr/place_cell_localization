@@ -5,7 +5,7 @@ passSet = [4,6:10];
 
 %% Initialize setup
 initialize;
-setup;
+setupEvaluation;
 
 numMaxResponses = 40;
 tic;

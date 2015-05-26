@@ -2,7 +2,7 @@
 methods = {'DSIFT', 'SF_GABOR', 'ST_GABOR', 'ST_GAUSS'};
 
 %% Initialize setup
-setup;
+setupEvaluation;
 
 %% User parameters
 
