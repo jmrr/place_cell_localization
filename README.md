@@ -11,6 +11,8 @@ This code has been customised and it has been tested with the [RSM dataset](http
 
 **Normal mode**
 
+* Rename setup.m.template to setup.m
+
 * Define and review parameters in `setup.m`
 
 * Run `main.m`

@@ -3,8 +3,11 @@
 %% User parameters
 
 % Load default parameters
+try
 setup;
-
+catch
+   disp('Make sure setup.m.template has been renamed to setup.m') 
+end
 %% Neural network model
 
 % model = NeuralNetworkRegression;
