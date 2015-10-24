@@ -3,7 +3,7 @@
 %% User parameters
 
 % Load default parameters
-setup_bg_otter;
+setup;
 
 %% Neural network model
 
