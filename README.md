@@ -1,4 +1,4 @@
-
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.33760.svg)](https://zenodo.org/record/33760#)
 ##Biologically inspired localization based on neural network training of place cell models
 
 MATLAB prototype of a visual localization system inspired in the behaviour of hippocampal place cells in mammalian brains.
@@ -24,4 +24,4 @@ This code has been customised and it has been tested with the [RSM dataset](http
 
 
 ### To-Do
-[] Create class parameters for a complete OOP version
+- [ ] Create class parameters for a complete OOP version
