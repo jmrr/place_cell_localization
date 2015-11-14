@@ -3,7 +3,7 @@
 
 MATLAB prototype of a visual localization system inspired in the behaviour of hippocampal place cells in mammalian brains.
 
-The model is produced by a bag-of-words pipeline that uses dense descriptors such as DSIFT, SF-GABOR, ST-GAUSS [(described here)](https://github.com/jmrr/visual_path_visualization). The locations are estimated by using regression with a generalized neural network.
+The model is produced by a bag-of-words pipeline that uses dense descriptors such as DSIFT, SF-GABOR, ST-GAUSS [(described here)](https://github.com/jmrr/localisation-from-visual-paths). The locations are estimated by using regression with a generalized neural network.
 
 This code has been customised and it has been tested with the [RSM dataset](http://rsm.bicv.org) of indoor sequences.
 
@@ -24,4 +24,4 @@ This code has been customised and it has been tested with the [RSM dataset](http
 
 
 ### To-Do
-Create class parameters for a complete OOP version
+[] Create class parameters for a complete OOP version
