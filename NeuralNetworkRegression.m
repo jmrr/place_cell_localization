@@ -91,7 +91,7 @@ classdef NeuralNetworkRegression < handle
 
             for i = 1:obj.NumCells
                 [lb, ub] = getBounds(cellFrames(i), sideSpan, obj.FramesCorr);
-                plot(lb:ub, smooth(meanActivations(i,midPoint-sideSpan:midPoint+sideSpan-1),paramsCells.smoothFac));
+                plot(lb:ub, smooth(meanActivations(i,midPoint-sideSpan:midPoint+sideSpan-1),paramsCells.smoothFac),'LineWidth',2);
                 hold on;
             end
             
