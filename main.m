@@ -10,7 +10,7 @@ catch
 end
 %% Neural network model
 
-% model = NeuralNetworkRegression;
+%model = NeuralNetworkRegression;
 model = NeuralNetworkRegression(16, 200, 400, 0); % 0: Thresholding only, 1: thresholding and scaling, 2: thresholding and [0:1] normalization.
 model.setLocations(paramsDataset, paramsCells, paramsQuery)
 model.nnTrainingInput(paramsDataset, paramsTraining, paramsQuery, paramsCells)
@@ -37,7 +37,7 @@ if(paramsDataset.debug)
     plot(queryLocations/100,'.', 'MarkerSize', 15);
     ylabel('Position (m)');
     xlabel('Query frame index');
-    legend('Location Estimate','Ground Truth');
+    legend('Location Estimate','Ground Truth','Location','NW');
 end
 
 %% Evaluate
@@ -76,7 +76,7 @@ if(paramsDataset.debug)
     plot(queryLocations/100,'.', 'MarkerSize', 15);
     ylabel('Position (m)');
     xlabel('Query frame index');
-    legend('Location Estimate','Ground Truth');
+    legend('Location Estimate','Ground Truth','Location','NW');
 end
 
 
