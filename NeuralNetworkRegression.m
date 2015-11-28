@@ -14,25 +14,31 @@ classdef NeuralNetworkRegression < handle
         % Flags
         NormFlag  = 0; % 0: Thresholding only, 1: thresholding and scaling, 2: thresholding and [0:1] normalization.
         
-        % Locations
+        % Observations locations
         Observations;
+        % Cell locations
         CellLocations;
+        % Query frames locations
         QueryLocations;
+        % Number of frames in the corridor
         FramesCorr;
-        % inputs
+        
+        % Training input
         Input;
+        % Target labels (positions)
         Target;
         
-        % query
+        % Query inputs
         Query;
         
-        % location estimate
+        % location estimates
         LocEstimate;
         
     end
     properties (SetAccess = private)
         % neural net (doesn't get inherited)
         Net;
+        % RBF spread
         Spread = 0.1;
     end
     methods (Static)
@@ -84,17 +90,27 @@ classdef NeuralNetworkRegression < handle
         function plotTuningCurves(obj, paramsCells, paramsDataset, paramsQuery, paramsTraining)
             activations     = reshape(obj.Input, obj.NumCells, obj.NumObservations, []);
             meanActivations = squeeze(mean(activations, 3));
-            midPoint        = length(meanActivations)/2;
-            sideSpan        = paramsCells.sideSpan;
+            midPoint        = round(length(meanActivations))/2;
+            if paramsCells.sideSpan < obj.NumObservations/2;
+                sideSpan = paramsCells.sideSpan;
+            else
+                sideSpan = round(obj.NumObservations/2);
+            end
             trainingGt      = getGroundTruth(paramsDataset,paramsQuery,paramsTraining.trainingSet);
             cellFrames      = frameFromGroundTruth(trainingGt{1}, obj.CellLocations);
 
             for i = 1:obj.NumCells
-                [lb, ub] = getBounds(cellFrames(i), sideSpan, obj.FramesCorr);
-                plot(lb:ub, smooth(meanActivations(i,midPoint-sideSpan:midPoint+sideSpan-1),paramsCells.smoothFac),'LineWidth',2);
-                hold on;
+                [lb, ub] = getBounds(cellFrames(i), sideSpan, obj.FramesCorr); % Lower and upper boundaries for cell support
+                [lbA, ubA] = getBounds(midPoint, sideSpan, obj.NumObservations); % Lower and upper boundaries for cell values
+                plot(lb:ub, smooth(meanActivations(i,lbA:ubA),paramsCells.smoothFac),'LineWidth',2);
+                legendStr{i} = ['APC' num2str(i)];
+                hold on; axis tight;
             end
-            
+            ylabel('APC Responses (A.U.)')
+            xlabel('Distance from origin (m)')
+            newLabels = trainingGt{1}(get(gca,'XTick'));
+            set(gca,'XTickLabel',round(newLabels/100));
+            legend(legendStr)
         end
     end
 end
