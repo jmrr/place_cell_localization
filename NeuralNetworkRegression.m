@@ -81,10 +81,10 @@ classdef NeuralNetworkRegression < handle
                 obj.QueryLocations, obj.NormFlag);
         end
         function train(obj)
-            obj.Net = newgrnn(obj.Input, obj.Target, obj.Spread);
+            obj.Net = newgrnn(obj.Input, obj.Target, obj.Spread);               % Create GRNN
         end
         function locEstimate = propagate(obj)
-            locEstimate     = sim(obj.Net, obj.Query);
+            locEstimate     = sim(obj.Net, obj.Query,'showResources','yes');    % Propagate GRNN
             obj.LocEstimate = locEstimate;
         end
         function plotTuningCurves(obj, paramsCells, paramsDataset, paramsQuery, paramsTraining)
